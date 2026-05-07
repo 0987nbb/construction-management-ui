@@ -1,14 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
+import { AuthResult, AuthService } from '../services/auth';
+import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [FormsModule, RouterLink],
-  templateUrl: './register.component.html',
-  styleUrl: './register.component.scss'
+  templateUrl: './register.html'
 })
 export class RegisterComponent {
 
@@ -24,18 +24,18 @@ export class RegisterComponent {
 
     this.authService.register(this.registerData)
       .subscribe({
-        next: (res) => {
-
+        next: (res: AuthResult) => {
           console.log(res);
-
-          alert('User Registered');
+          alert(res.message || 'User Registered');
         },
 
-        error: (err) => {
-
+        error: (err: HttpErrorResponse) => {
           console.log(err);
-
-          alert('Registration Failed');
+          const message =
+            (err.error && err.error.message) ||
+            (typeof err.error === 'string' ? err.error : '') ||
+            'Registration Failed';
+          alert(message);
         }
       });
   }

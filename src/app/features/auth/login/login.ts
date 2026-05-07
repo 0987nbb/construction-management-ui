@@ -1,14 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
+import { AuthResult, AuthService } from '../services/auth';
+import { HttpErrorResponse } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [FormsModule,RouterLink  ],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  templateUrl: './login.html'
 })
 export class LoginComponent {
 
@@ -23,18 +23,22 @@ export class LoginComponent {
 
     this.authService.login(this.loginData)
       .subscribe({
-        next: (res: any) => {
-
+        next: (res: AuthResult) => {
           console.log(res);
 
-          localStorage.setItem('token', res);
-
-          alert('Login Successful');
+          if (res.token) {
+            localStorage.setItem('token', res.token);
+          }
+          alert(res.message || 'Login Successful');
         },
 
-        error: (err) => {
+        error: (err: HttpErrorResponse) => {
           console.log(err);
-          alert('Login Failed');
+          const message =
+            (err.error && err.error.message) ||
+            (typeof err.error === 'string' ? err.error : '') ||
+            'Login Failed';
+          alert(message);
         }
       });
   }
