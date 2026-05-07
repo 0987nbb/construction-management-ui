@@ -1,0 +1,88 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 430px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 2rem;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+}
+
+h1 {
+  margin: 0 0 0.4rem;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+p {
+  margin: 0 0 1.5rem;
+  color: #6b7280;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 0.78rem 0.85rem;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.14);
+}
+
+button {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 0.83rem 1rem;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: linear-gradient(90deg, #4f46e5 0%, #6366f1 100%);
+  cursor: pointer;
+  margin-top: 0.25rem;
+}
+
+button:hover {
+  filter: brightness(1.04);
+}
+
+.footer-link {
+  margin-top: 1rem;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.92rem;
+}
+
+a {
+  margin-left: 0.35rem;
+  text-decoration: none;
+  color: #4f46e5;
+  font-weight: 600;
+}

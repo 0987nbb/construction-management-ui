@@ -1,27 +1,41 @@
-<div class="login-container">
+<div class="auth-page">
+  <div class="auth-card">
+    <h1>Welcome Back!</h1>
+    <p>Sign in to continue</p>
 
-  <h2>Login</h2>
+    <div class="field">
+      <label for="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        placeholder="Enter your email"
+        [(ngModel)]="loginData.email"
+      />
+    </div>
 
-  <input
-    type="email"
-    placeholder="Email"
-    [(ngModel)]="loginData.email"
-  />
+    <div class="field">
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        placeholder="Enter your password"
+        [(ngModel)]="loginData.password"
+      />
+    </div>
 
-  <input
-    type="password"
-    placeholder="Password"
-    [(ngModel)]="loginData.password"
-  />
+    <div class="row">
+      <label class="remember">
+        <input type="checkbox" />
+        Remember me
+      </label>
+      <span class="muted">Forgot password?</span>
+    </div>
 
-  <button (click)="login()">
-    Login
-  </button>
+    <button type="button" (click)="login()">Sign In</button>
 
-  <br><br>
-
-  <a routerLink="/register">
-    Go To Register
-  </a>
-
+    <div class="footer-link">
+      <span>Don't have an account?</span>
+      <a routerLink="/register">Create account</a>
+    </div>
+  </div>
 </div>
