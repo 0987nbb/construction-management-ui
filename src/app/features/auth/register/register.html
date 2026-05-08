@@ -3,37 +3,48 @@
     <h1>Create Account</h1>
     <p>Register to start using Construction Management</p>
 
-    <div class="field">
-      <label for="fullName">Full Name</label>
-      <input
-        id="fullName"
-        type="text"
-        placeholder="Enter your full name"
-        [(ngModel)]="registerData.fullName"
-      />
-    </div>
+    <form #registerForm="ngForm" (ngSubmit)="register()" novalidate>
+      <div class="field">
+        <label for="fullName">Full Name</label>
+        <input
+          id="fullName"
+          name="fullName"
+          type="text"
+          placeholder="Enter your full name"
+          autocomplete="name"
+          required
+          [(ngModel)]="registerData.fullName"
+        />
+      </div>
 
-    <div class="field">
-      <label for="email">Email</label>
-      <input
-        id="email"
-        type="email"
-        placeholder="Enter your email"
-        [(ngModel)]="registerData.email"
-      />
-    </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          placeholder="Enter your email"
+          autocomplete="email"
+          required
+          [(ngModel)]="registerData.email"
+        />
+      </div>
 
-    <div class="field">
-      <label for="password">Password</label>
-      <input
-        id="password"
-        type="password"
-        placeholder="Create password"
-        [(ngModel)]="registerData.password"
-      />
-    </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          placeholder="Create password"
+          autocomplete="new-password"
+          required
+          [(ngModel)]="registerData.password"
+        />
+      </div>
 
-    <button type="button" (click)="register()">Sign Up</button>
+      <button type="submit">Sign Up</button>
+    </form>
 
     <div class="footer-link">
       <span>Already have an account?</span>
