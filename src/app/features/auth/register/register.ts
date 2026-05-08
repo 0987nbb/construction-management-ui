@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthResult, AuthService } from '../services/auth';
 import { HttpErrorResponse } from '@angular/common/http';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -12,8 +12,8 @@ import { RouterLink } from '@angular/router';
   styleUrl: './register.scss'
 })
 export class RegisterComponent {
-
-  private authService = inject(AuthService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   registerData = {
     fullName: '',
@@ -22,22 +22,18 @@ export class RegisterComponent {
   };
 
   register() {
-
-    this.authService.register(this.registerData)
-      .subscribe({
-        next: (res: AuthResult) => {
-          console.log(res);
-          alert(res.message || 'User Registered');
-        },
-
-        error: (err: HttpErrorResponse) => {
-          console.log(err);
-          const message =
-            (err.error && err.error.message) ||
-            (typeof err.error === 'string' ? err.error : '') ||
-            'Registration Failed';
-          alert(message);
-        }
-      });
+    this.authService.register(this.registerData).subscribe({
+      next: (res: AuthResult) => {
+        alert(res.message || 'User registered successfully');
+        this.router.navigate(['/login']);
+      },
+      error: (err: HttpErrorResponse) => {
+        const message =
+          (err.error && err.error.message) ||
+          (typeof err.error === 'string' ? err.error : '') ||
+          'Registration failed';
+        alert(message);
+      }
+    });
   }
 }
