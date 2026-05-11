@@ -1,11 +1,18 @@
-<header class="topbar">
-  <h1>Construction Management</h1>
-  <nav>
-    <a routerLink="/dashboard">Dashboard</a>
-    <a routerLink="/users">Users</a>
-    <a routerLink="/profile">Profile</a>
-  </nav>
-</header>
-<main class="container">
-  <router-outlet></router-outlet>
-</main>
+<div class="shell" *ngIf="isAuthenticated; else authOnly">
+  <aside class="sidebar">
+    <h2>CM ERP</h2>
+    <p class="role">{{ role() }}</p>
+    <nav>
+      <a *ngFor="let item of menu()" [routerLink]="item.route">{{ item.label }}</a>
+    </nav>
+    <button type="button" (click)="logout()">Logout</button>
+  </aside>
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
+<ng-template #authOnly>
+  <main class="auth-content">
+    <router-outlet></router-outlet>
+  </main>
+</ng-template>

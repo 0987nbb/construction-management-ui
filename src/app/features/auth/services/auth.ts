@@ -17,9 +17,7 @@ interface JwtPayload {
   ['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']?: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiBaseUrl}/auth`;
@@ -34,18 +32,15 @@ export class AuthService {
     return this.http.post<AuthResult>(`${this.apiUrl}/login`, data);
   }
 
+  setPassword(data: { token: string; password: string }): Observable<AuthResult> {
+    return this.http.post<AuthResult>(`${this.apiUrl}/set-password`, data);
+  }
+
   saveSession(result: AuthResult): void {
-    if (!result.token) {
-      return;
-    }
-
+    if (!result.token) return;
     localStorage.setItem(this.tokenStorageKey, result.token);
-
-    const tokenRole = this.getRoleFromToken(result.token);
-    const effectiveRole = tokenRole ?? result.role;
-    if (effectiveRole) {
-      localStorage.setItem(this.roleStorageKey, effectiveRole);
-    }
+    const role = this.getRoleFromToken(result.token) ?? result.role;
+    if (role) localStorage.setItem(this.roleStorageKey, role);
   }
 
   clearSession(): void {
@@ -55,64 +50,55 @@ export class AuthService {
 
   getToken(): string | null {
     const token = localStorage.getItem(this.tokenStorageKey);
-    if (!token) {
-      return null;
-    }
-
+    if (!token) return null;
     if (this.isTokenExpired(token)) {
       this.clearSession();
       return null;
     }
-
     return token;
   }
 
   getRole(): string | null {
     const token = this.getToken();
     if (token) {
-      const tokenRole = this.getRoleFromToken(token);
-      if (tokenRole) {
-        return tokenRole;
-      }
+      const role = this.getRoleFromToken(token);
+      if (role) return role;
     }
-
     return localStorage.getItem(this.roleStorageKey);
   }
 
-  isAuthenticated(): boolean {
-    return !!this.getToken();
+  getLandingRouteByRole(): string {
+    const role = this.getRole();
+    switch (role) {
+      case 'Admin': return '/dashboard';
+      case 'Project Manager': return '/pm/dashboard';
+      case 'Engineer': return '/engineer/dashboard';
+      case 'Accountant': return '/accountant/dashboard';
+      case 'Client': return '/client/dashboard';
+      default: return '/access-denied';
+    }
   }
+
+  isAuthenticated(): boolean { return !!this.getToken(); }
 
   private getRoleFromToken(token: string): string | null {
     const payload = this.decodePayload(token);
-    return (
-      payload?.role ??
-      payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ??
-      null
-    );
+    return payload?.role ?? payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ?? null;
   }
 
   private isTokenExpired(token: string): boolean {
     const payload = this.decodePayload(token);
-    if (!payload?.exp) {
-      return true;
-    }
-
-    const nowInSeconds = Math.floor(Date.now() / 1000);
-    return payload.exp <= nowInSeconds;
+    if (!payload?.exp) return true;
+    return payload.exp <= Math.floor(Date.now() / 1000);
   }
 
   private decodePayload(token: string): JwtPayload | null {
     const parts = token.split('.');
-    if (parts.length !== 3) {
-      return null;
-    }
-
+    if (parts.length !== 3) return null;
     try {
       const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
       const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
-      const payload = atob(padded);
-      return JSON.parse(payload) as JwtPayload;
+      return JSON.parse(atob(padded)) as JwtPayload;
     } catch {
       return null;
     }

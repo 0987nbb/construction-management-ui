@@ -15,27 +15,17 @@ export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  loginData = {
-    email: '',
-    password: ''
-  };
+  loginData = { email: '', password: '' };
 
-  login() {
+  login(): void {
     this.authService.login(this.loginData).subscribe({
       next: (res: AuthResult) => {
-        if (res.token) {
-          this.authService.saveSession(res);
-          this.router.navigate(['/dashboard']);
-          return;
-        }
-
-        alert(res.message || 'Login failed');
+        if (!res.token) return alert(res.message || 'Login failed');
+        this.authService.saveSession(res);
+        this.router.navigateByUrl(this.authService.getLandingRouteByRole());
       },
       error: (err: HttpErrorResponse) => {
-        const message =
-          (err.error && err.error.message) ||
-          (typeof err.error === 'string' ? err.error : '') ||
-          'Login failed';
+        const message = (err.error && err.error.message) || (typeof err.error === 'string' ? err.error : '') || 'Login failed';
         alert(message);
       }
     });

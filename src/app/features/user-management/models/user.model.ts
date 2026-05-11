@@ -13,6 +13,13 @@ export interface User {
   role: UserRole;
   phoneNumber?: string;
   isActive: boolean;
+  mustChangePassword: boolean;
   createdAt: string;
   updatedAt?: string;
+}
+
+export interface InviteUserResponse {
+  user: User;
+  inviteLink: string;
+  expiresAtUtc: string;
 }
