@@ -1,0 +1,17 @@
+<section class="toolbar">
+  <h2>User Management</h2>
+  <a routerLink="/users/new">Add User</a>
+</section>
+
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.fullName }}</td><td>{{ user.email }}</td><td>{{ user.role }}</td>
+        <td><button type="button" (click)="toggle(user)">{{ user.isActive ? 'Active' : 'Inactive' }}</button></td>
+        <td><a [routerLink]="['/users', user.id, 'edit']">Edit</a> <button type="button" (click)="delete(user)">Delete</button></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

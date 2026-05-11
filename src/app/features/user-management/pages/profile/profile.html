@@ -1,0 +1,8 @@
+<form class="card" [formGroup]="form" (ngSubmit)="save()">
+  <h2>My Profile</h2>
+  <label>Full Name<input formControlName="fullName" /></label>
+  <label>Email<input formControlName="email" /></label>
+  <label>Role<input formControlName="role" /></label>
+  <label>Phone Number<input formControlName="phoneNumber" /></label>
+  <button type="submit">Update Profile</button>
+</form>

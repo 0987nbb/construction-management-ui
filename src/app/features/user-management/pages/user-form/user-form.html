@@ -1,0 +1,11 @@
+<a routerLink="/users">Back</a>
+<form [formGroup]="form" (ngSubmit)="submit()" class="card">
+  <h2>{{ userId ? 'Edit User' : 'Add User' }}</h2>
+  <label>Full Name<input formControlName="fullName" /></label>
+  <label>Email<input formControlName="email" [readonly]="!!userId" /></label>
+  <label *ngIf="!userId">Password<input type="password" formControlName="password" /></label>
+  <label>Phone Number<input formControlName="phoneNumber" /></label>
+  <label>Role<select formControlName="role"><option *ngFor="let role of roles" [value]="role">{{ role }}</option></select></label>
+  <label><input type="checkbox" formControlName="isActive" /> Active</label>
+  <button type="submit">{{ userId ? 'Update' : 'Create' }}</button>
+</form>
