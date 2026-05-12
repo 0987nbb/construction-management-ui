@@ -1,0 +1,34 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <h1>Welcome — complete your account</h1>
+    <p>Use your temporary password once, choose a permanent password, and confirm your profile details.</p>
+
+    @if (error) {
+      <p class="error-msg">{{ error }}</p>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="field">
+        <label for="cur-pass">Temporary / current password</label>
+        <input id="cur-pass" type="password" autocomplete="current-password" formControlName="currentPassword" />
+      </div>
+      <div class="field">
+        <label for="new-pass">New password</label>
+        <input id="new-pass" type="password" autocomplete="new-password" formControlName="newPassword" />
+      </div>
+      <div class="field">
+        <label for="conf-pass">Confirm new password</label>
+        <input id="conf-pass" type="password" autocomplete="new-password" formControlName="confirmPassword" />
+      </div>
+      <div class="field">
+        <label for="name">Full name</label>
+        <input id="name" type="text" autocomplete="name" formControlName="fullName" />
+      </div>
+      <div class="field">
+        <label for="phone">Phone</label>
+        <input id="phone" type="tel" autocomplete="tel" formControlName="phoneNumber" />
+      </div>
+      <button type="submit" [disabled]="form.invalid">Continue to dashboard</button>
+    </form>
+  </div>
+</div>

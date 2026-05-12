@@ -18,7 +18,7 @@ export class App {
   readonly menu = computed(() => {
     const role = this.role();
     const common = [{ label: 'Profile', route: '/profile' }];
-    if (role === 'Admin') return [{ label: 'Admin Dashboard', route: '/dashboard' }, { label: 'Users', route: '/users' }, ...common];
+    if (role === 'Admin') return [{ label: 'Admin Dashboard', route: '/dashboard' }, { label: 'Users', route: '/users' }, { label: 'Clients', route: '/clients' }, ...common];
     if (role === 'Project Manager') return [{ label: 'PM Dashboard', route: '/pm/dashboard' }, ...common];
     if (role === 'Engineer') return [{ label: 'Engineer Dashboard', route: '/engineer/dashboard' }, ...common];
     if (role === 'Accountant') return [{ label: 'Finance Dashboard', route: '/accountant/dashboard' }, ...common];
@@ -26,7 +26,9 @@ export class App {
     return [];
   });
 
-  get isAuthenticated(): boolean { return this.authService.isAuthenticated(); }
+  get showMainChrome(): boolean {
+    return this.authService.showMainChrome();
+  }
 
   logout(): void {
     this.authService.clearSession();

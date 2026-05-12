@@ -1,17 +1,25 @@
 <a routerLink="/users">Back</a>
 <form [formGroup]="form" (ngSubmit)="submit()" class="card">
-  <h2>{{ userId ? 'Edit User' : 'Invite User' }}</h2>
+  <h2>{{ userId ? 'Edit User' : 'Create Staff User' }}</h2>
+  <p *ngIf="!userId" class="hint">Only Project Manager, Engineer, and Accountant accounts are created here. Clients use public registration.</p>
+
   <label>Full Name<input formControlName="fullName" /></label>
-  <label>Email<input formControlName="email" [readonly]="!!userId" /></label>
+  <label>Email<input formControlName="email" /></label>
   <label>Phone Number<input formControlName="phoneNumber" /></label>
-  <label>Role<select formControlName="role"><option *ngFor="let role of roles" [value]="role">{{ role }}</option></select></label>
+  <label>Role<select formControlName="role">
+    <option *ngFor="let role of roleOptions" [value]="role">{{ role }}</option>
+  </select></label>
+  <label *ngIf="!userId">
+    Temporary password
+    <input type="password" formControlName="temporaryPassword" autocomplete="new-password" />
+  </label>
   <label><input type="checkbox" formControlName="isActive" /> Active</label>
-  <button type="submit">{{ userId ? 'Update' : 'Create & Generate Invite' }}</button>
+  <button type="submit">{{ userId ? 'Update' : 'Create user' }}</button>
 </form>
 
-<section class="invite" *ngIf="inviteLink && !userId">
-  <h3>Invite Generated</h3>
-  <p>Share this link with user (expires: {{ inviteExpiry | date:'medium' }}):</p>
-  <textarea rows="3" readonly>{{ inviteLink }}</textarea>
-  <button type="button" (click)="copyInviteLink()">Copy Link</button>
+<section class="created" *ngIf="temporaryPasswordShown && !userId">
+  <h3>User created</h3>
+  <p>Share this temporary password securely with the user. They will set a new password on first sign-in.</p>
+  <textarea rows="2" readonly>{{ temporaryPasswordShown }}</textarea>
+  <button type="button" (click)="copyTempPassword()">Copy password</button>
 </section>

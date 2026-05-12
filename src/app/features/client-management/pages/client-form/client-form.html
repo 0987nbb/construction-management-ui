@@ -1,0 +1,22 @@
+<section class="toolbar">
+  <h2>{{ clientId ? 'Edit Client' : 'Add Client' }}</h2>
+  <a routerLink="/clients">Back</a>
+</section>
+
+<p class="state" *ngIf="loading">Saving/loading...</p>
+<p class="state error" *ngIf="error">{{ error }}</p>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="form" *ngIf="!loading">
+  <label>Name <input type="text" formControlName="name" /></label>
+  <label>Email <input type="email" formControlName="email" /></label>
+  <label>Phone <input type="text" formControlName="phone" /></label>
+  <label>Address <input type="text" formControlName="address" /></label>
+  <label>Company <input type="text" formControlName="company" /></label>
+  <label class="check"><input type="checkbox" formControlName="isActive" /> Active</label>
+
+  <h3 *ngIf="clientId">Link Project (Optional)</h3>
+  <label *ngIf="clientId">Project Name <input type="text" formControlName="projectName" /></label>
+  <label *ngIf="clientId">Project Code <input type="text" formControlName="projectCode" /></label>
+
+  <button type="submit" [disabled]="form.invalid">Save Client</button>
+</form>

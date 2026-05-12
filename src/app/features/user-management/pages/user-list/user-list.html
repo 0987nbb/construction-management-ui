@@ -3,15 +3,38 @@
   <a routerLink="/users/new">Add User</a>
 </section>
 
-<div class="table-wrap">
+<section class="filters">
+  <input type="text" [(ngModel)]="search" placeholder="Search by name, email, phone" />
+  <select [(ngModel)]="role">
+    <option value="">All Roles</option>
+    <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+  </select>
+  <select [(ngModel)]="isActive">
+    <option value="">All Status</option>
+    <option value="true">Active</option>
+    <option value="false">Inactive</option>
+  </select>
+  <button type="button" (click)="load()">Apply</button>
+  <button type="button" class="muted" (click)="clearFilters()">Reset</button>
+</section>
+
+<p class="state" *ngIf="loading">Loading users...</p>
+<p class="state error" *ngIf="!loading && error">{{ error }}</p>
+<p class="state" *ngIf="!loading && !error && users.length === 0">No users found.</p>
+
+<div class="table-wrap" *ngIf="!loading && users.length">
   <table>
     <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Onboarding</th><th>Status</th><th>Actions</th></tr></thead>
     <tbody>
       <tr *ngFor="let user of users">
         <td>{{ user.fullName }}</td><td>{{ user.email }}</td><td>{{ user.role }}</td>
-        <td>{{ user.mustChangePassword ? 'Invite Pending' : 'Password Set' }}</td>
+        <td>{{ onboardingLabel(user) }}</td>
         <td><button type="button" (click)="toggle(user)">{{ user.isActive ? 'Active' : 'Inactive' }}</button></td>
-        <td><a [routerLink]="['/users', user.id, 'edit']">Edit</a> <button type="button" (click)="delete(user)">Delete</button></td>
+        <td>
+          <a [routerLink]="['/users', user.id, 'edit']">Edit</a>
+          <button type="button" (click)="resetPassword(user)">Reset temp password</button>
+          <button type="button" (click)="delete(user)">Delete</button>
+        </td>
       </tr>
     </tbody>
   </table>

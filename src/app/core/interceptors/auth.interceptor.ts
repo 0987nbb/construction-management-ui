@@ -21,7 +21,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         router.navigateByUrl('/login');
       }
       if (error.status === 403) {
-        router.navigateByUrl('/access-denied');
+        if (authService.requiresFirstLoginCompletion()) {
+          router.navigateByUrl('/first-login');
+        } else {
+          router.navigateByUrl('/access-denied');
+        }
       }
       return throwError(() => error);
     })

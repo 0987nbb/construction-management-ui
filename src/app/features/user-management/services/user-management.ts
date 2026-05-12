@@ -1,21 +1,42 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { ApiResponse, InviteUserResponse, User, UserRole } from '../models/user.model';
+import { ApiResponse, CreateStaffResponse, User, UserRole } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserManagementService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiBaseUrl}/users`;
 
-  getAll(): Observable<ApiResponse<User[]>> { return this.http.get<ApiResponse<User[]>>(this.apiUrl); }
+  getAll(filters?: { search?: string; role?: UserRole | ''; isActive?: '' | 'true' | 'false' }): Observable<ApiResponse<User[]>> {
+    let params = new HttpParams();
+    if (filters?.search?.trim()) params = params.set('search', filters.search.trim());
+    if (filters?.role) params = params.set('role', filters.role);
+    if (filters?.isActive) params = params.set('isActive', filters.isActive);
+    return this.http.get<ApiResponse<User[]>>(this.apiUrl, { params });
+  }
+
   getById(id: string): Observable<ApiResponse<User>> { return this.http.get<ApiResponse<User>>(`${this.apiUrl}/${id}`); }
-  create(payload: { fullName: string; email: string; role: UserRole; phoneNumber?: string; isActive: boolean; }): Observable<ApiResponse<InviteUserResponse>> { return this.http.post<ApiResponse<InviteUserResponse>>(this.apiUrl, payload); }
+  create(payload: {
+    fullName: string;
+    email: string;
+    role: UserRole;
+    temporaryPassword: string;
+    phoneNumber?: string;
+    isActive: boolean;
+  }): Observable<ApiResponse<CreateStaffResponse>> {
+    return this.http.post<ApiResponse<CreateStaffResponse>>(this.apiUrl, payload);
+  }
   update(id: string, payload: { fullName: string; phoneNumber?: string; }): Observable<ApiResponse<User>> { return this.http.put<ApiResponse<User>>(`${this.apiUrl}/${id}`, payload); }
   remove(id: string): Observable<ApiResponse<boolean>> { return this.http.delete<ApiResponse<boolean>>(`${this.apiUrl}/${id}`); }
   updateStatus(id: string, isActive: boolean): Observable<ApiResponse<User>> { return this.http.patch<ApiResponse<User>>(`${this.apiUrl}/${id}/status`, { isActive }); }
   assignRole(id: string, role: UserRole): Observable<ApiResponse<User>> { return this.http.patch<ApiResponse<User>>(`${this.apiUrl}/${id}/role`, { role }); }
+  adminResetTemporaryPassword(id: string, temporaryPassword: string): Observable<ApiResponse<{ temporaryPassword: string }>> {
+    return this.http.patch<ApiResponse<{ temporaryPassword: string }>>(`${this.apiUrl}/${id}/reset-password`, {
+      temporaryPassword
+    });
+  }
   getProfile(): Observable<ApiResponse<User>> { return this.http.get<ApiResponse<User>>(`${this.apiUrl}/profile`); }
   updateProfile(payload: { fullName: string; phoneNumber?: string; }): Observable<ApiResponse<User>> { return this.http.put<ApiResponse<User>>(`${this.apiUrl}/profile`, payload); }
 }

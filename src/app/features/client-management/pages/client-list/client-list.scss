@@ -1,5 +1,5 @@
 .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
-.filters{display:grid;grid-template-columns:2fr 1fr 1fr auto auto;gap:.6rem;margin-bottom:1rem}
+.filters{display:grid;grid-template-columns:2fr 1fr auto auto;gap:.6rem;margin-bottom:1rem}
 .filters input,.filters select{padding:.55rem .65rem;border:1px solid #cbd5e1;border-radius:8px}
 .table-wrap{overflow:auto;background:#fff;padding:1rem;border-radius:12px}
 table{width:100%;border-collapse:collapse}

@@ -9,11 +9,13 @@ export interface AuthResult {
   token?: string;
   role?: string;
   expiresAtUtc?: string;
+  isFirstLogin?: boolean;
 }
 
 interface JwtPayload {
   exp?: number;
   role?: string;
+  is_first_login?: string | boolean;
   ['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']?: string;
 }
 
@@ -34,6 +36,15 @@ export class AuthService {
 
   setPassword(data: { token: string; password: string }): Observable<AuthResult> {
     return this.http.post<AuthResult>(`${this.apiUrl}/set-password`, data);
+  }
+
+  completeFirstLogin(payload: {
+    currentPassword: string;
+    newPassword: string;
+    fullName: string;
+    phoneNumber: string;
+  }): Observable<AuthResult> {
+    return this.http.post<AuthResult>(`${this.apiUrl}/complete-first-login`, payload);
   }
 
   saveSession(result: AuthResult): void {
@@ -67,23 +78,49 @@ export class AuthService {
     return localStorage.getItem(this.roleStorageKey);
   }
 
+  /** When true, the user may only call profile + complete-first-login until onboarding finishes. */
+  requiresFirstLoginCompletion(): boolean {
+    const raw = localStorage.getItem(this.tokenStorageKey);
+    if (!raw || this.isTokenExpired(raw)) return false;
+    return this.isFirstLoginClaimTrue(raw);
+  }
+
   getLandingRouteByRole(): string {
     const role = this.getRole();
     switch (role) {
-      case 'Admin': return '/dashboard';
-      case 'Project Manager': return '/pm/dashboard';
-      case 'Engineer': return '/engineer/dashboard';
-      case 'Accountant': return '/accountant/dashboard';
-      case 'Client': return '/client/dashboard';
-      default: return '/access-denied';
+      case 'Admin':
+        return '/dashboard';
+      case 'Project Manager':
+        return '/pm/dashboard';
+      case 'Engineer':
+        return '/engineer/dashboard';
+      case 'Accountant':
+        return '/accountant/dashboard';
+      case 'Client':
+        return '/client/dashboard';
+      default:
+        return '/access-denied';
     }
   }
 
-  isAuthenticated(): boolean { return !!this.getToken(); }
+  isAuthenticated(): boolean {
+    return !!this.getToken();
+  }
+
+  /** Main app chrome (sidebar) only after onboarding is complete. */
+  showMainChrome(): boolean {
+    return this.isAuthenticated() && !this.requiresFirstLoginCompletion();
+  }
 
   private getRoleFromToken(token: string): string | null {
     const payload = this.decodePayload(token);
     return payload?.role ?? payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ?? null;
+  }
+
+  private isFirstLoginClaimTrue(token: string): boolean {
+    const payload = this.decodePayload(token);
+    const v = payload?.is_first_login;
+    return v === true || v === 'true';
   }
 
   private isTokenExpired(token: string): boolean {

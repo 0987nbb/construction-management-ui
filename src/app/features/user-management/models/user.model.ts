@@ -14,12 +14,14 @@ export interface User {
   phoneNumber?: string;
   isActive: boolean;
   mustChangePassword: boolean;
+  isFirstLogin: boolean;
   createdAt: string;
   updatedAt?: string;
 }
 
-export interface InviteUserResponse {
+export type AssignableStaffRole = 'Project Manager' | 'Engineer' | 'Accountant';
+
+export interface CreateStaffResponse {
   user: User;
-  inviteLink: string;
-  expiresAtUtc: string;
+  temporaryPassword: string;
 }

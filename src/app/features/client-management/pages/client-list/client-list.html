@@ -1,0 +1,39 @@
+<section class="toolbar">
+  <h2>Client Management</h2>
+  <a routerLink="/clients/new">Add Client</a>
+</section>
+
+<section class="filters">
+  <input type="text" [(ngModel)]="search" placeholder="Search by name, email, company, phone" />
+  <select [(ngModel)]="isActive">
+    <option value="">All Status</option>
+    <option value="true">Active</option>
+    <option value="false">Inactive</option>
+  </select>
+  <button type="button" (click)="load()">Apply</button>
+  <button type="button" class="muted" (click)="clearFilters()">Reset</button>
+</section>
+
+<p class="state" *ngIf="loading">Loading clients...</p>
+<p class="state error" *ngIf="!loading && error">{{ error }}</p>
+<p class="state" *ngIf="!loading && !error && clients.length === 0">No clients found.</p>
+
+<div class="table-wrap" *ngIf="!loading && clients.length">
+  <table>
+    <thead><tr><th>Name</th><th>Email</th><th>Company</th><th>Phone</th><th>Status</th><th>Projects</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr *ngFor="let client of clients">
+        <td>{{ client.name }}</td>
+        <td>{{ client.email }}</td>
+        <td>{{ client.company }}</td>
+        <td>{{ client.phone }}</td>
+        <td>{{ client.isActive ? 'Active' : 'Inactive' }}</td>
+        <td>{{ client.projects.length }}</td>
+        <td>
+          <a [routerLink]="['/clients', client.id, 'edit']">Edit</a>
+          <button type="button" (click)="delete(client)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
