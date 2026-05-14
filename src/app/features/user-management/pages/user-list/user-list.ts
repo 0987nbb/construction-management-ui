@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -11,11 +10,13 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { UserManagementService } from '../../services/user-management';
 import { User } from '../../models/user.model';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { DialogModule } from 'primeng/dialog';
+import { UserFormComponent } from '../user-form/user-form';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, TableModule, ButtonModule, InputTextModule, TagModule],
+  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TagModule, DialogModule, UserFormComponent],
   templateUrl: './user-list.html',
   styleUrl: './user-list.scss'
 })
@@ -29,6 +30,8 @@ export class UserListComponent implements OnInit, OnDestroy {
   error = '';
 
   search = '';
+  showFormDialog = false;
+  editingUserId: string | null = null;
   private readonly destroy$ = new Subject<void>();
   private readonly search$ = new Subject<string>();
 
@@ -71,6 +74,27 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   onSearchChange(): void {
     this.search$.next(this.search.trim());
+  }
+
+  openCreateDialog(): void {
+    this.editingUserId = null;
+    this.showFormDialog = true;
+  }
+
+  openEditDialog(user: User): void {
+    this.editingUserId = user.id;
+    this.showFormDialog = true;
+  }
+
+  closeFormDialog(): void {
+    this.showFormDialog = false;
+    this.editingUserId = null;
+  }
+
+  handleFormSaved(): void {
+    this.closeFormDialog();
+    this.load();
+    this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'User saved successfully.' });
   }
 
   toggle(user: User): void {

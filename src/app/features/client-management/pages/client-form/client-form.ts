@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -21,6 +21,10 @@ export class ClientFormComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly clientService = inject(ClientManagementService);
+  @Input() clientIdInput: string | null = null;
+  @Input() inDialog = false;
+  @Output() saved = new EventEmitter<void>();
+  @Output() cancelled = new EventEmitter<void>();
 
   clientId: string | null = null;
   error = '';
@@ -38,7 +42,7 @@ export class ClientFormComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.clientId = this.route.snapshot.paramMap.get('id');
+    this.clientId = this.clientIdInput ?? this.route.snapshot.paramMap.get('id');
     if (!this.clientId) return;
 
     this.loading = true;
@@ -84,7 +88,7 @@ export class ClientFormComponent implements OnInit {
       this.clientService.create(payload).subscribe({
         next: () => {
           this.loading = false;
-          this.router.navigateByUrl('/clients');
+          this.finishSuccess();
         },
         error: (err: HttpErrorResponse) => {
           this.error = err.error?.message || 'Failed to create client.';
@@ -101,14 +105,14 @@ export class ClientFormComponent implements OnInit {
 
         if (!projectName || !projectCode) {
           this.loading = false;
-          this.router.navigateByUrl('/clients');
+          this.finishSuccess();
           return;
         }
 
         this.clientService.linkProject(this.clientId!, { projectName, projectCode }).subscribe({
           next: () => {
             this.loading = false;
-            this.router.navigateByUrl('/clients');
+            this.finishSuccess();
           },
           error: (err: HttpErrorResponse) => {
             this.error = err.error?.message || 'Client saved, but project linking failed.';
@@ -121,5 +125,21 @@ export class ClientFormComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  onCancel(): void {
+    if (this.inDialog) {
+      this.cancelled.emit();
+      return;
+    }
+    this.router.navigateByUrl('/clients');
+  }
+
+  private finishSuccess(): void {
+    if (this.inDialog) {
+      this.saved.emit();
+      return;
+    }
+    this.router.navigateByUrl('/clients');
   }
 }

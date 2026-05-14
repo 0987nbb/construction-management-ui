@@ -1,8 +1,8 @@
 <form [formGroup]="form" (ngSubmit)="submit()" *ngIf="!loading">
   <app-form-shell
-    backLink="/clients"
+    [backLink]="inDialog ? '' : '/clients'"
     backLabel="Back To Clients"
-    [stickyActions]="true"
+    [stickyActions]="!inDialog"
     [title]="clientId ? 'Edit Client' : 'Create Client'"
     subtitle="Maintain client records with clear account and contact hierarchy."
   >
@@ -33,6 +33,7 @@
     </div>
 
     <div form-card-actions class="erp-actions">
+      <button pButton type="button" severity="secondary" [outlined]="true" label="Cancel" icon="pi pi-times" (click)="onCancel()"></button>
       <button pButton type="submit" [disabled]="form.invalid" label="Save Client" icon="pi pi-check"></button>
     </div>
   </app-form-shell>

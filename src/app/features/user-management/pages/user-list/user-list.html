@@ -1,6 +1,6 @@
 <section class="page-card p-4">
   <div class="crud-toolbar">
-    <a pButton routerLink="/users/new" icon="pi pi-plus" label="New"></a>
+    <button pButton type="button" icon="pi pi-plus" label="New" (click)="openCreateDialog()"></button>
   </div>
 
   <div class="head-row">
@@ -40,7 +40,7 @@
         </td>
         <td>
           <div class="row-actions">
-            <a pButton [routerLink]="['/users', user.id, 'edit']" icon="pi pi-pencil" severity="secondary" outlined="true" size="small"></a>
+            <button pButton type="button" icon="pi pi-pencil" severity="secondary" outlined="true" size="small" (click)="openEditDialog(user)"></button>
             <button pButton type="button" icon="pi pi-trash" severity="danger" outlined="true" size="small" (click)="delete(user)"></button>
           </div>
         </td>
@@ -54,3 +54,23 @@
     </ng-template>
   </p-table>
 </section>
+
+<p-dialog
+  [(visible)]="showFormDialog"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: 'min(96vw, 980px)' }"
+  [contentStyle]="{ padding: '0.5rem', maxHeight: '80vh', overflow: 'auto' }"
+  [header]="editingUserId ? 'Edit User' : 'Create User'"
+  (onHide)="closeFormDialog()"
+>
+  <app-user-form
+    *ngIf="showFormDialog"
+    [inDialog]="true"
+    [userIdInput]="editingUserId"
+    (saved)="handleFormSaved()"
+    (cancelled)="closeFormDialog()"
+  ></app-user-form>
+</p-dialog>

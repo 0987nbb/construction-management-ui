@@ -1,24 +1,23 @@
 <section class="page-card p-4">
+  <div class="crud-toolbar">
+    <button pButton type="button" icon="pi pi-plus" label="New" (click)="openCreateDialog()"></button>
+  </div>
+
   <div class="head-row">
     <div>
       <h2>Client Management</h2>
       <p>Manage client accounts, status, and project linkage context.</p>
     </div>
-    <a pButton routerLink="/clients/new" icon="pi pi-plus" label="Add Client"></a>
-  </div>
-
-  <div class="filter-grid">
-    <input pInputText type="text" [(ngModel)]="search" placeholder="Search name, email, company, phone" />
-    <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [(ngModel)]="isActive"></p-select>
-    <div class="actions">
-      <button pButton type="button" icon="pi pi-search" label="Apply" (click)="load()"></button>
-      <button pButton type="button" icon="pi pi-refresh" label="Reset" severity="secondary" outlined="true" (click)="clearFilters()"></button>
+    <div class="search-wrap">
+      <i class="pi pi-search"></i>
+      <input pInputText type="text" [(ngModel)]="search" (ngModelChange)="onSearchChange()" placeholder="Search..." />
+      <button pButton type="button" icon="pi pi-times" text="true" rounded="true" (click)="clearSearch()"></button>
     </div>
   </div>
 
   <p class="error" *ngIf="error">{{ error }}</p>
 
-  <p-table [value]="clients" [loading]="loading" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" responsiveLayout="scroll" styleClass="p-datatable-sm">
+  <p-table [value]="clients" [loading]="loading" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" responsiveLayout="scroll" styleClass="p-datatable-sm p-datatable-gridlines">
     <ng-template pTemplate="header">
       <tr>
         <th>Name</th>
@@ -41,7 +40,7 @@
         <td>{{ client.projects.length }}</td>
         <td>
           <div class="row-actions">
-            <a pButton [routerLink]="['/clients', client.id, 'edit']" icon="pi pi-pencil" severity="secondary" outlined="true" size="small"></a>
+            <button pButton type="button" icon="pi pi-pencil" severity="secondary" outlined="true" size="small" (click)="openEditDialog(client)"></button>
             <button pButton type="button" icon="pi pi-trash" severity="danger" outlined="true" size="small" (click)="delete(client)"></button>
           </div>
         </td>
@@ -55,3 +54,23 @@
     </ng-template>
   </p-table>
 </section>
+
+<p-dialog
+  [(visible)]="showFormDialog"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: 'min(96vw, 980px)' }"
+  [contentStyle]="{ padding: '0.5rem', maxHeight: '80vh', overflow: 'auto' }"
+  [header]="editingClientId ? 'Edit Client' : 'Create Client'"
+  (onHide)="closeFormDialog()"
+>
+  <app-client-form
+    *ngIf="showFormDialog"
+    [inDialog]="true"
+    [clientIdInput]="editingClientId"
+    (saved)="handleFormSaved()"
+    (cancelled)="closeFormDialog()"
+  ></app-client-form>
+</p-dialog>

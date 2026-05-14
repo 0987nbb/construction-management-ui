@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -23,6 +23,10 @@ export class UserFormComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly userService = inject(UserManagementService);
+  @Input() userIdInput: string | null = null;
+  @Input() inDialog = false;
+  @Output() saved = new EventEmitter<void>();
+  @Output() cancelled = new EventEmitter<void>();
 
   readonly staffRoles: AssignableStaffRole[] = ['Project Manager', 'Engineer', 'Accountant'];
 
@@ -53,7 +57,7 @@ export class UserFormComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.userId = this.route.snapshot.paramMap.get('id');
+    this.userId = this.userIdInput ?? this.route.snapshot.paramMap.get('id');
     const emailCtl = this.form.controls.email;
 
     if (this.userId) {
@@ -96,6 +100,7 @@ export class UserFormComponent implements OnInit {
           next: (res) => {
             this.inviteExpiresAtUtc = res.data?.inviteExpiresAtUtc ?? '';
             this.success = res.message || 'User created and invitation sent.';
+            if (this.inDialog) this.saved.emit();
           },
           error: (err: HttpErrorResponse) => {
             this.error = err.error?.message || 'Failed to create user.';
@@ -118,11 +123,26 @@ export class UserFormComponent implements OnInit {
 
       const r = chainRole();
       if (r) {
-        r.subscribe(() => chainStatus().subscribe(() => this.router.navigateByUrl('/users')));
+        r.subscribe(() => chainStatus().subscribe(() => this.finishSuccess()));
       } else {
-        chainStatus().subscribe(() => this.router.navigateByUrl('/users'));
+        chainStatus().subscribe(() => this.finishSuccess());
       }
     });
   }
 
+  onCancel(): void {
+    if (this.inDialog) {
+      this.cancelled.emit();
+      return;
+    }
+    this.router.navigateByUrl('/users');
+  }
+
+  private finishSuccess(): void {
+    if (this.inDialog) {
+      this.saved.emit();
+      return;
+    }
+    this.router.navigateByUrl('/users');
+  }
 }

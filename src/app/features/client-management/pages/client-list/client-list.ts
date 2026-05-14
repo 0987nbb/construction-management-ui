@@ -1,25 +1,26 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
-import { ConfirmationService, MessageService, SelectItem } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ClientManagementService } from '../../services/client-management.service';
 import { Client } from '../../models/client.model';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { DialogModule } from 'primeng/dialog';
+import { ClientFormComponent } from '../client-form/client-form';
 
 @Component({
   selector: 'app-client-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, TableModule, ButtonModule, InputTextModule, SelectModule, TagModule],
+  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule, TagModule, DialogModule, ClientFormComponent],
   templateUrl: './client-list.html',
   styleUrl: './client-list.scss'
 })
-export class ClientListComponent implements OnInit {
+export class ClientListComponent implements OnInit, OnDestroy {
   private readonly clientService = inject(ClientManagementService);
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
@@ -29,22 +30,27 @@ export class ClientListComponent implements OnInit {
   error = '';
 
   search = '';
-  isActive: '' | 'true' | 'false' = '';
-
-  readonly statusOptions: SelectItem[] = [
-    { label: 'All Status', value: '' },
-    { label: 'Active', value: 'true' },
-    { label: 'Inactive', value: 'false' }
-  ];
+  showFormDialog = false;
+  editingClientId: string | null = null;
+  private readonly destroy$ = new Subject<void>();
+  private readonly search$ = new Subject<string>();
 
   ngOnInit(): void {
+    this.search$
+      .pipe(debounceTime(250), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => this.load());
     this.load();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   load(): void {
     this.loading = true;
     this.error = '';
-    this.clientService.getAll({ search: this.search, isActive: this.isActive }).subscribe({
+    this.clientService.getAll({ search: this.search }).subscribe({
       next: (res) => {
         this.clients = res.data ?? [];
         this.loading = false;
@@ -56,10 +62,34 @@ export class ClientListComponent implements OnInit {
     });
   }
 
-  clearFilters(): void {
+  clearSearch(): void {
     this.search = '';
-    this.isActive = '';
     this.load();
+  }
+
+  onSearchChange(): void {
+    this.search$.next(this.search.trim());
+  }
+
+  openCreateDialog(): void {
+    this.editingClientId = null;
+    this.showFormDialog = true;
+  }
+
+  openEditDialog(client: Client): void {
+    this.editingClientId = client.id;
+    this.showFormDialog = true;
+  }
+
+  closeFormDialog(): void {
+    this.showFormDialog = false;
+    this.editingClientId = null;
+  }
+
+  handleFormSaved(): void {
+    this.closeFormDialog();
+    this.load();
+    this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'Client saved successfully.' });
   }
 
   delete(client: Client): void {

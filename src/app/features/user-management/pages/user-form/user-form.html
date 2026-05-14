@@ -1,8 +1,8 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
   <app-form-shell
-    backLink="/users"
+    [backLink]="inDialog ? '' : '/users'"
     backLabel="Back To Users"
-    [stickyActions]="true"
+    [stickyActions]="!inDialog"
     [title]="userId ? 'Edit Staff User' : 'Create Staff User'"
     subtitle="Modernized ERP user provisioning with invitation-based onboarding."
   >
@@ -47,6 +47,7 @@
     </div>
 
     <div form-card-actions class="erp-actions">
+      <button pButton type="button" severity="secondary" [outlined]="true" label="Cancel" icon="pi pi-times" (click)="onCancel()"></button>
       <button pButton type="submit" [label]="userId ? 'Update User' : 'Create User'" icon="pi pi-check"></button>
     </div>
 

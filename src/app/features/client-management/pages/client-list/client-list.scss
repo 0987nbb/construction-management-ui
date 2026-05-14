@@ -1,8 +1,14 @@
+.crud-toolbar {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+}
+
 .head-row {
   display: flex;
   justify-content: space-between;
-  gap: 1rem;
-  align-items: flex-start;
+  align-items: center;
+  gap: 1.25rem;
   margin-bottom: 1rem;
 }
 
@@ -15,21 +21,35 @@
   color: #64748b;
 }
 
-.filter-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr auto;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+.search-wrap {
+  position: relative;
+  min-width: 280px;
 }
 
-.actions {
-  display: flex;
-  gap: 0.5rem;
+.search-wrap > i {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+}
+
+.search-wrap input {
+  width: 100%;
+  padding-left: 2.4rem;
+  padding-right: 2.3rem;
+}
+
+.search-wrap button {
+  position: absolute;
+  right: 0.2rem;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .row-actions {
   display: flex;
-  gap: 0.35rem;
+  gap: 0.5rem;
 }
 
 .error {
@@ -37,17 +57,25 @@
   margin: 0 0 1rem;
 }
 
-:host ::ng-deep .p-datatable td,
-:host ::ng-deep .p-datatable th {
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
   white-space: nowrap;
+  font-weight: 600;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  white-space: nowrap;
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
 }
 
 @media (max-width: 992px) {
   .head-row {
     flex-direction: column;
+    align-items: stretch;
   }
 
-  .filter-grid {
-    grid-template-columns: 1fr;
+  .search-wrap {
+    width: 100%;
+    min-width: 0;
   }
 }
