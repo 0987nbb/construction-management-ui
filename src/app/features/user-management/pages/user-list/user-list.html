@@ -1,41 +1,59 @@
-<section class="toolbar">
-  <h2>User Management</h2>
-  <a routerLink="/users/new">Add User</a>
-</section>
+<section class="page-card p-4">
+  <div class="head-row">
+    <div>
+      <h2>User Management</h2>
+      <p>Manage staff lifecycle, role assignments, and onboarding status.</p>
+    </div>
+    <a pButton routerLink="/users/new" icon="pi pi-plus" label="Add User"></a>
+  </div>
 
-<section class="filters">
-  <input type="text" [(ngModel)]="search" placeholder="Search by name, email, phone" />
-  <select [(ngModel)]="role">
-    <option value="">All Roles</option>
-    <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
-  </select>
-  <select [(ngModel)]="isActive">
-    <option value="">All Status</option>
-    <option value="true">Active</option>
-    <option value="false">Inactive</option>
-  </select>
-  <button type="button" (click)="load()">Apply</button>
-  <button type="button" class="muted" (click)="clearFilters()">Reset</button>
-</section>
+  <div class="filter-grid">
+    <input pInputText type="text" [(ngModel)]="search" placeholder="Search name, email, phone" />
+    <p-select [options]="roleOptions" optionLabel="label" optionValue="value" [(ngModel)]="role"></p-select>
+    <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [(ngModel)]="isActive"></p-select>
+    <div class="actions">
+      <button pButton type="button" icon="pi pi-search" label="Apply" (click)="load()"></button>
+      <button pButton type="button" icon="pi pi-refresh" label="Reset" severity="secondary" outlined="true" (click)="clearFilters()"></button>
+    </div>
+  </div>
 
-<p class="state" *ngIf="loading">Loading users...</p>
-<p class="state error" *ngIf="!loading && error">{{ error }}</p>
-<p class="state" *ngIf="!loading && !error && users.length === 0">No users found.</p>
+  <p class="error" *ngIf="error">{{ error }}</p>
 
-<div class="table-wrap" *ngIf="!loading && users.length">
-  <table>
-    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Onboarding</th><th>Status</th><th>Actions</th></tr></thead>
-    <tbody>
-      <tr *ngFor="let user of users">
-        <td>{{ user.fullName }}</td><td>{{ user.email }}</td><td>{{ user.role }}</td>
-        <td>{{ onboardingLabel(user) }}</td>
-        <td><button type="button" (click)="toggle(user)">{{ user.isActive ? 'Active' : 'Inactive' }}</button></td>
+  <p-table [value]="users" [loading]="loading" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" responsiveLayout="scroll" styleClass="p-datatable-sm">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Onboarding</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-user>
+      <tr>
+        <td>{{ user.fullName }}</td>
+        <td>{{ user.email }}</td>
+        <td><p-tag [value]="user.role" severity="info"></p-tag></td>
+        <td><p-tag [value]="onboardingLabel(user)" [severity]="user.mustChangePassword || user.isFirstLogin ? 'warn' : 'success'"></p-tag></td>
         <td>
-          <a [routerLink]="['/users', user.id, 'edit']">Edit</a>
-          <button type="button" (click)="resetPassword(user)">Reset temp password</button>
-          <button type="button" (click)="delete(user)">Delete</button>
+          <button pButton type="button" size="small" [label]="user.isActive ? 'Active' : 'Inactive'" [severity]="user.isActive ? 'success' : 'secondary'" (click)="toggle(user)"></button>
+        </td>
+        <td>
+          <div class="row-actions">
+            <a pButton [routerLink]="['/users', user.id, 'edit']" icon="pi pi-pencil" severity="secondary" outlined="true" size="small"></a>
+            <button pButton type="button" icon="pi pi-key" severity="contrast" size="small" pTooltip="Reset temporary password" (click)="resetPassword(user)"></button>
+            <button pButton type="button" icon="pi pi-trash" severity="danger" outlined="true" size="small" (click)="delete(user)"></button>
+          </div>
         </td>
       </tr>
-    </tbody>
-  </table>
-</div>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="6">No users found.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</section>

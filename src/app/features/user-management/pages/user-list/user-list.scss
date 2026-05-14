@@ -1,10 +1,57 @@
-.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
-.filters{display:grid;grid-template-columns:2fr 1fr 1fr auto auto;gap:.6rem;margin-bottom:1rem}
-.filters input,.filters select{padding:.55rem .65rem;border:1px solid #cbd5e1;border-radius:8px}
-.table-wrap{overflow:auto;background:#fff;padding:1rem;border-radius:12px}
-table{width:100%;border-collapse:collapse}
-th,td{padding:.65rem;border-bottom:1px solid #e2e8f0;text-align:left}
-.state{margin:.4rem 0 .8rem}
-.error{color:#b91c1c}
-button.muted{background:#64748b}
-@media (max-width:900px){.filters{grid-template-columns:1fr}}
+.head-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.head-row h2 {
+  margin: 0;
+}
+
+.head-row p {
+  margin: 0.3rem 0 0;
+  color: #64748b;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.row-actions {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.error {
+  color: #b91c1c;
+  margin: 0 0 1rem;
+}
+
+:host ::ng-deep .p-datatable td,
+:host ::ng-deep .p-datatable th {
+  white-space: nowrap;
+}
+
+@media (max-width: 992px) {
+  .head-row {
+    flex-direction: column;
+  }
+
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    justify-content: stretch;
+  }
+}

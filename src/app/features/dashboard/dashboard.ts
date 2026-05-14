@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
 import { AuthService } from '../auth/services/auth';
 import { DashboardKpis, DashboardService } from './services/dashboard.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ButtonModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })

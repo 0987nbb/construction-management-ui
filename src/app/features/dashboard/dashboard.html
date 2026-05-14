@@ -1,26 +1,46 @@
-<section class="hero">
-  <div>
-    <h2>Welcome to Construction Management Dashboard</h2>
-    <p>You are logged in as <strong>{{ role }}</strong>. Use quick actions to continue your workflow.</p>
+<section class="page-card hero p-4">
+  <div class="hero-copy">
+    <p class="eyebrow">Operations Hub</p>
+    <h2 class="section-title">Admin Command Center</h2>
+    <p class="section-subtitle">Operational visibility for users, clients, and governance activity.</p>
   </div>
-  <div class="actions">
-    <a routerLink="/users" *ngIf="role === 'Admin'">Manage Users</a>
-    <a routerLink="/users/new" *ngIf="role === 'Admin'">Create User</a>
-    <a routerLink="/profile">My Profile</a>
+  <div class="quick-actions">
+    <a pButton routerLink="/users" icon="pi pi-users" label="User Ops"></a>
+    <a pButton routerLink="/clients" icon="pi pi-briefcase" label="Client Ops" severity="secondary"></a>
+    <a pButton routerLink="/profile" icon="pi pi-user" label="My Profile" severity="contrast"></a>
   </div>
 </section>
 
-<p *ngIf="loading">Loading KPIs...</p>
-<p *ngIf="error" class="error">{{ error }}</p>
+<section class="kpi-grid" *ngIf="!loading && role === 'Admin'">
+  <article class="kpi-card">
+    <span>Total Users</span>
+    <h3>{{ kpis.totalUsers }}</h3>
+  </article>
+  <article class="kpi-card">
+    <span>Active Users</span>
+    <h3>{{ kpis.activeUsers }}</h3>
+  </article>
+  <article class="kpi-card">
+    <span>Inactive Users</span>
+    <h3>{{ kpis.inactiveUsers }}</h3>
+  </article>
+  <article class="kpi-card">
+    <span>Total Clients</span>
+    <h3>{{ kpis.clientCount }}</h3>
+  </article>
+</section>
 
-<section class="stats" *ngIf="!loading && role === 'Admin'">
-  <article class="stat teal"><h3>{{ kpis.totalUsers }}</h3><p>Total Users</p></article>
-  <article class="stat green"><h3>{{ kpis.activeUsers }}</h3><p>Active Users</p></article>
-  <article class="stat orange"><h3>{{ kpis.inactiveUsers }}</h3><p>Inactive Users</p></article>
+<section class="page-card status-box p-4" *ngIf="loading">
+  <i class="pi pi-spin pi-spinner"></i>
+  <p>Loading latest KPI metrics...</p>
+</section>
+<section class="page-card status-box error-box p-4" *ngIf="error">
+  <i class="pi pi-exclamation-triangle"></i>
+  <p>{{ error }}</p>
 </section>
 
 <section class="panel-grid" *ngIf="!loading">
-  <article class="panel" *ngIf="role === 'Admin'">
+  <article class="page-card panel p-3" *ngIf="role === 'Admin'">
     <h3>Role Distribution</h3>
     <ul>
       <li>Admins: {{ kpis.adminCount }}</li>
@@ -31,15 +51,15 @@
     </ul>
   </article>
 
-  <article class="panel" *ngIf="role === 'Admin'">
-    <h3>Administration</h3>
-    <p>Control user lifecycle, role assignment, and account status from one place.</p>
-    <a routerLink="/users">Open User Management</a>
+  <article class="page-card panel p-3" *ngIf="role === 'Admin'">
+    <h3>Activity Focus</h3>
+    <p>Track onboarding status, role assignment, and account state from one panel.</p>
+    <a routerLink="/users">Open User Operations</a>
   </article>
 
-  <article class="panel">
-    <h3>Profile Center</h3>
-    <p>Keep personal details up to date for secure communication and audit traceability.</p>
-    <a routerLink="/profile">Open Profile</a>
+  <article class="page-card panel p-3">
+    <h3>Profile and Security</h3>
+    <p>Keep account details current to maintain accurate audit and communication channels.</p>
+    <a routerLink="/profile">Open Profile Center</a>
   </article>
 </section>

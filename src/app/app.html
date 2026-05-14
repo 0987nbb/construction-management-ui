@@ -1,16 +1,47 @@
-<div class="shell" *ngIf="showMainChrome; else authOnly">
-  <aside class="sidebar">
-    <h2>CM ERP</h2>
-    <p class="role">{{ role() }}</p>
-    <nav>
-      <a *ngFor="let item of menu()" [routerLink]="item.route">{{ item.label }}</a>
+<div class="app-shell" *ngIf="showMainChrome; else authOnly">
+  <header class="topbar">
+    <button pButton type="button" icon="pi pi-bars" class="p-button-text p-button-plain" (click)="toggleSidebar()"></button>
+    <div class="brand-block">
+      <h1>Construction ERP</h1>
+      <small>Planning, execution, and control center</small>
+    </div>
+    <div class="topbar-actions">
+      <span class="role-chip">{{ role() }}</span>
+      <button pButton type="button" label="Logout" icon="pi pi-sign-out" severity="secondary" (click)="logout()"></button>
+    </div>
+  </header>
+
+  <aside class="sidebar" [class.open]="sidebarOpen()">
+    <div class="sidebar-head">
+      <h2>CM Core</h2>
+      <button pButton type="button" icon="pi pi-times" class="p-button-text p-button-plain mobile-only" (click)="closeSidebar()"></button>
+    </div>
+    <p class="sidebar-caption">Navigate your project operations and team workspace.</p>
+
+    <nav class="nav-menu">
+      <a
+        *ngFor="let item of menu()"
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' || item.route.endsWith('/dashboard') }"
+        (click)="closeSidebar()"
+      >
+        <i [class]="item.icon"></i>
+        <span>{{ item.label }}</span>
+      </a>
     </nav>
-    <button type="button" (click)="logout()">Logout</button>
   </aside>
+
+  <div class="overlay" *ngIf="sidebarOpen()" (click)="closeSidebar()"></div>
+
   <main class="content">
     <router-outlet></router-outlet>
   </main>
+
+  <p-toast position="top-right"></p-toast>
+  <p-confirmDialog [style]="{ width: '30rem', maxWidth: '95vw' }"></p-confirmDialog>
 </div>
+
 <ng-template #authOnly>
   <main class="auth-content">
     <router-outlet></router-outlet>
