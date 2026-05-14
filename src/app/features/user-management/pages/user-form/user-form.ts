@@ -1,14 +1,20 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserManagementService } from '../../services/user-management';
 import { AssignableStaffRole, UserRole } from '../../models/user.model';
+import { HttpErrorResponse } from '@angular/common/http';
+import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
+import { ButtonModule } from 'primeng/button';
+import { FormShellComponent } from '../../../../shared/ui/form-shell/form-shell';
+import { FormSectionComponent } from '../../../../shared/ui/form-section/form-section';
 
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, InputTextModule, SelectModule, ButtonModule, FormShellComponent, FormSectionComponent],
   templateUrl: './user-form.html',
   styleUrl: './user-form.scss'
 })
@@ -27,8 +33,14 @@ export class UserFormComponent implements OnInit {
     return [...this.staffRoles];
   }
 
+  get roleSelectOptions(): Array<{ label: string; value: UserRole }> {
+    return this.roleOptions.map((role) => ({ label: role, value: role }));
+  }
+
   userId: string | null = null;
-  temporaryPasswordShown = '';
+  inviteExpiresAtUtc = '';
+  error = '';
+  success = '';
 
   loadedRole: UserRole | null = null;
 
@@ -37,8 +49,7 @@ export class UserFormComponent implements OnInit {
     email: [{ value: '', disabled: false }, [Validators.required, Validators.email]],
     phoneNumber: [''],
     role: this.fb.nonNullable.control<AssignableStaffRole | UserRole>('Project Manager', Validators.required),
-    isActive: [true],
-    temporaryPassword: ['']
+    isActive: [true]
   });
 
   ngOnInit(): void {
@@ -47,8 +58,6 @@ export class UserFormComponent implements OnInit {
 
     if (this.userId) {
       emailCtl.disable({ emitEvent: false });
-      this.form.controls.temporaryPassword.clearValidators();
-      this.form.controls.temporaryPassword.updateValueAndValidity({ emitEvent: false });
       this.userService.getById(this.userId).subscribe((res) => {
         const u = res.data;
         if (!u) return;
@@ -66,16 +75,12 @@ export class UserFormComponent implements OnInit {
       });
       return;
     }
-
-    this.form.controls.temporaryPassword.setValidators([
-      Validators.required,
-      Validators.minLength(8)
-    ]);
-    this.form.controls.temporaryPassword.updateValueAndValidity({ emitEvent: false });
   }
 
   submit(): void {
     if (this.form.invalid) return;
+    this.error = '';
+    this.success = '';
     const v = this.form.getRawValue();
 
     if (!this.userId) {
@@ -84,12 +89,17 @@ export class UserFormComponent implements OnInit {
           fullName: v.fullName || '',
           email: (v.email || '').trim(),
           role: v.role as UserRole,
-          temporaryPassword: v.temporaryPassword || '',
           phoneNumber: v.phoneNumber || undefined,
           isActive: !!v.isActive
         })
-        .subscribe((res) => {
-          this.temporaryPasswordShown = res.data?.temporaryPassword ?? '';
+        .subscribe({
+          next: (res) => {
+            this.inviteExpiresAtUtc = res.data?.inviteExpiresAtUtc ?? '';
+            this.success = res.message || 'User created and invitation sent.';
+          },
+          error: (err: HttpErrorResponse) => {
+            this.error = err.error?.message || 'Failed to create user.';
+          }
         });
       return;
     }
@@ -115,8 +125,4 @@ export class UserFormComponent implements OnInit {
     });
   }
 
-  copyTempPassword(): void {
-    if (!this.temporaryPasswordShown) return;
-    void navigator.clipboard.writeText(this.temporaryPasswordShown);
-  }
 }

@@ -22,7 +22,6 @@ export class UserManagementService {
     fullName: string;
     email: string;
     role: UserRole;
-    temporaryPassword: string;
     phoneNumber?: string;
     isActive: boolean;
   }): Observable<ApiResponse<CreateStaffResponse>> {
@@ -32,11 +31,6 @@ export class UserManagementService {
   remove(id: string): Observable<ApiResponse<boolean>> { return this.http.delete<ApiResponse<boolean>>(`${this.apiUrl}/${id}`); }
   updateStatus(id: string, isActive: boolean): Observable<ApiResponse<User>> { return this.http.patch<ApiResponse<User>>(`${this.apiUrl}/${id}/status`, { isActive }); }
   assignRole(id: string, role: UserRole): Observable<ApiResponse<User>> { return this.http.patch<ApiResponse<User>>(`${this.apiUrl}/${id}/role`, { role }); }
-  adminResetTemporaryPassword(id: string, temporaryPassword: string): Observable<ApiResponse<{ temporaryPassword: string }>> {
-    return this.http.patch<ApiResponse<{ temporaryPassword: string }>>(`${this.apiUrl}/${id}/reset-password`, {
-      temporaryPassword
-    });
-  }
   getProfile(): Observable<ApiResponse<User>> { return this.http.get<ApiResponse<User>>(`${this.apiUrl}/profile`); }
   updateProfile(payload: { fullName: string; phoneNumber?: string; }): Observable<ApiResponse<User>> { return this.http.put<ApiResponse<User>>(`${this.apiUrl}/profile`, payload); }
 }

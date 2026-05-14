@@ -19,22 +19,54 @@ export class SetPasswordComponent {
 
   message = '';
   error = '';
+  tokenValidating = true;
+  tokenIsValid = false;
+  allowDirectSubmit = false;
+  private token = '';
 
   form = this.fb.group({
     password: ['', [Validators.required, Validators.minLength(8), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/)]],
     confirmPassword: ['', [Validators.required]]
   });
 
+  constructor() {
+    this.token = this.route.snapshot.queryParamMap.get('token') ?? '';
+    if (!this.token) {
+      this.error = 'Invalid invite link.';
+      this.tokenValidating = false;
+      return;
+    }
+
+    setTimeout(() => {
+      if (this.tokenValidating) {
+        this.tokenValidating = false;
+        this.allowDirectSubmit = true;
+        this.error = 'Link verification is taking too long. You can still continue and set password.';
+      }
+    }, 8000);
+
+    this.authService.validateSetupToken(this.token).subscribe({
+      next: () => {
+        this.tokenIsValid = true;
+        this.tokenValidating = false;
+      },
+      error: (err) => {
+        this.error = err?.error?.message ?? 'Invite link is invalid or expired.';
+        this.tokenValidating = false;
+      }
+    });
+  }
+
   submit(): void {
     this.error = '';
-    const token = this.route.snapshot.queryParamMap.get('token');
-    if (!token) { this.error = 'Invalid invite link.'; return; }
+    if (!this.token) { this.error = 'Invite link is invalid or expired.'; return; }
+    if (!this.tokenIsValid && !this.allowDirectSubmit) { this.error = 'Invite link is invalid or expired.'; return; }
     if (this.form.invalid) return;
 
     const { password, confirmPassword } = this.form.getRawValue();
     if (password !== confirmPassword) { this.error = 'Passwords do not match.'; return; }
 
-    this.authService.setPassword({ token, password: password! }).subscribe({
+    this.authService.setPassword({ token: this.token, password: password! }).subscribe({
       next: (res) => {
         this.message = res.message;
         setTimeout(() => this.router.navigateByUrl('/login'), 1200);
@@ -43,5 +75,11 @@ export class SetPasswordComponent {
         this.error = err?.error?.message ?? 'Unable to set password.';
       }
     });
+  }
+
+  continueAnyway(): void {
+    this.error = '';
+    this.allowDirectSubmit = true;
+    this.tokenValidating = false;
   }
 }

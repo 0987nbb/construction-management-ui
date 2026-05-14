@@ -2,11 +2,15 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserManagementService } from '../../services/user-management';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { FormShellComponent } from '../../../../shared/ui/form-shell/form-shell';
+import { FormSectionComponent } from '../../../../shared/ui/form-section/form-section';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, InputTextModule, ButtonModule, FormShellComponent, FormSectionComponent],
   templateUrl: './profile.html',
   styleUrl: './profile.scss'
 })

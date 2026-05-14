@@ -22,10 +22,6 @@ export class LoginComponent {
       next: (res: AuthResult) => {
         if (!res.token) return alert(res.message || 'Login failed');
         this.authService.saveSession(res);
-        if (res.isFirstLogin) {
-          this.router.navigateByUrl('/first-login');
-          return;
-        }
         this.router.navigateByUrl(this.authService.getLandingRouteByRole());
       },
       error: (err: HttpErrorResponse) => {

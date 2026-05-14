@@ -1,0 +1,29 @@
+.erp-form-section + .erp-form-section {
+  margin-top: 1rem;
+}
+
+.erp-form-section {
+  border: 1px solid var(--border-soft);
+  border-radius: 0.9rem;
+  background: var(--surface-2);
+}
+
+.erp-form-section-head {
+  padding: 0.95rem 1rem 0.6rem;
+}
+
+.erp-form-section-head h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-strong);
+}
+
+.erp-form-section-head p {
+  margin: 0.28rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.erp-form-section-body {
+  padding: 0.8rem 1rem 1rem;
+}

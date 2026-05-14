@@ -23,5 +23,5 @@ export type AssignableStaffRole = 'Project Manager' | 'Engineer' | 'Accountant';
 
 export interface CreateStaffResponse {
   user: User;
-  temporaryPassword: string;
+  inviteExpiresAtUtc: string;
 }

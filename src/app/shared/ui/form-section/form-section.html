@@ -1,0 +1,9 @@
+<section class="erp-form-section">
+  <header *ngIf="title || subtitle" class="erp-form-section-head">
+    <h3 *ngIf="title">{{ title }}</h3>
+    <p *ngIf="subtitle">{{ subtitle }}</p>
+  </header>
+  <div class="erp-form-section-body">
+    <ng-content></ng-content>
+  </div>
+</section>

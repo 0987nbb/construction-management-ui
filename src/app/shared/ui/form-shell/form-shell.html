@@ -1,0 +1,23 @@
+<section class="erp-form-shell">
+  <a *ngIf="backLink" [routerLink]="backLink" class="erp-back-link">
+    <i class="pi pi-arrow-left"></i>
+    <span>{{ backLabel }}</span>
+  </a>
+
+  <article class="erp-form-card">
+    <header class="erp-form-header">
+      <h2>{{ title }}</h2>
+      <p *ngIf="subtitle">{{ subtitle }}</p>
+    </header>
+
+    <div class="erp-form-body">
+      <ng-content select="[form-card-body]"></ng-content>
+    </div>
+
+    <footer class="erp-form-footer" [class.sticky]="stickyActions">
+      <ng-content select="[form-card-actions]"></ng-content>
+    </footer>
+  </article>
+
+  <ng-content select="[form-card-aside]"></ng-content>
+</section>

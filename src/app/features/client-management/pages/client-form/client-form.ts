@@ -1,14 +1,18 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ClientManagementService } from '../../services/client-management.service';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { FormShellComponent } from '../../../../shared/ui/form-shell/form-shell';
+import { FormSectionComponent } from '../../../../shared/ui/form-section/form-section';
 
 @Component({
   selector: 'app-client-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, InputTextModule, ButtonModule, FormShellComponent, FormSectionComponent],
   templateUrl: './client-form.html',
   styleUrl: './client-form.scss'
 })

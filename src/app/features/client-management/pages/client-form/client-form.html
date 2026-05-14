@@ -1,22 +1,39 @@
-<section class="toolbar">
-  <h2>{{ clientId ? 'Edit Client' : 'Add Client' }}</h2>
-  <a routerLink="/clients">Back</a>
-</section>
+<form [formGroup]="form" (ngSubmit)="submit()" *ngIf="!loading">
+  <app-form-shell
+    backLink="/clients"
+    backLabel="Back To Clients"
+    [stickyActions]="true"
+    [title]="clientId ? 'Edit Client' : 'Create Client'"
+    subtitle="Maintain client records with clear account and contact hierarchy."
+  >
+    <div form-card-body>
+      <p class="cm-form-hint" *ngIf="loading">Saving/loading...</p>
+      <p class="cm-state-error" *ngIf="error">{{ error }}</p>
 
-<p class="state" *ngIf="loading">Saving/loading...</p>
-<p class="state error" *ngIf="error">{{ error }}</p>
+      <app-form-section title="Client Account" subtitle="Core identity and communication details.">
+        <div class="erp-grid">
+          <div class="erp-field"><label for="name">Name</label><input id="name" pInputText type="text" formControlName="name" /></div>
+          <div class="erp-field"><label for="email">Email</label><input id="email" pInputText type="email" formControlName="email" /></div>
+          <div class="erp-field"><label for="phone">Phone</label><input id="phone" pInputText type="text" formControlName="phone" /></div>
+          <div class="erp-field"><label for="company">Company</label><input id="company" pInputText type="text" formControlName="company" /></div>
+          <div class="erp-field erp-field-full"><label for="address">Address</label><input id="address" pInputText type="text" formControlName="address" /></div>
+          <label class="erp-checkbox">
+            <input type="checkbox" formControlName="isActive" />
+            <span>Active Client</span>
+          </label>
+        </div>
+      </app-form-section>
 
-<form [formGroup]="form" (ngSubmit)="submit()" class="form" *ngIf="!loading">
-  <label>Name <input type="text" formControlName="name" /></label>
-  <label>Email <input type="email" formControlName="email" /></label>
-  <label>Phone <input type="text" formControlName="phone" /></label>
-  <label>Address <input type="text" formControlName="address" /></label>
-  <label>Company <input type="text" formControlName="company" /></label>
-  <label class="check"><input type="checkbox" formControlName="isActive" /> Active</label>
+      <app-form-section *ngIf="clientId" title="Project Link (Optional)" subtitle="Attach project details while updating an existing client.">
+        <div class="erp-grid">
+          <div class="erp-field"><label for="projectName">Project Name</label><input id="projectName" pInputText type="text" formControlName="projectName" /></div>
+          <div class="erp-field"><label for="projectCode">Project Code</label><input id="projectCode" pInputText type="text" formControlName="projectCode" /></div>
+        </div>
+      </app-form-section>
+    </div>
 
-  <h3 *ngIf="clientId">Link Project (Optional)</h3>
-  <label *ngIf="clientId">Project Name <input type="text" formControlName="projectName" /></label>
-  <label *ngIf="clientId">Project Code <input type="text" formControlName="projectCode" /></label>
-
-  <button type="submit" [disabled]="form.invalid">Save Client</button>
+    <div form-card-actions class="erp-actions">
+      <button pButton type="submit" [disabled]="form.invalid" label="Save Client" icon="pi pi-check"></button>
+    </div>
+  </app-form-shell>
 </form>

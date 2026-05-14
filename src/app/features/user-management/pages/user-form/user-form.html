@@ -1,25 +1,59 @@
-<a routerLink="/users">Back</a>
-<form [formGroup]="form" (ngSubmit)="submit()" class="card">
-  <h2>{{ userId ? 'Edit User' : 'Create Staff User' }}</h2>
-  <p *ngIf="!userId" class="hint">Only Project Manager, Engineer, and Accountant accounts are created here. Clients use public registration.</p>
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <app-form-shell
+    backLink="/users"
+    backLabel="Back To Users"
+    [stickyActions]="true"
+    [title]="userId ? 'Edit Staff User' : 'Create Staff User'"
+    subtitle="Modernized ERP user provisioning with invitation-based onboarding."
+  >
+    <div form-card-body>
+      <p class="cm-state-error" *ngIf="error">{{ error }}</p>
+      <p class="cm-state-ok" *ngIf="success">{{ success }}</p>
 
-  <label>Full Name<input formControlName="fullName" /></label>
-  <label>Email<input formControlName="email" /></label>
-  <label>Phone Number<input formControlName="phoneNumber" /></label>
-  <label>Role<select formControlName="role">
-    <option *ngFor="let role of roleOptions" [value]="role">{{ role }}</option>
-  </select></label>
-  <label *ngIf="!userId">
-    Temporary password
-    <input type="password" formControlName="temporaryPassword" autocomplete="new-password" />
-  </label>
-  <label><input type="checkbox" formControlName="isActive" /> Active</label>
-  <button type="submit">{{ userId ? 'Update' : 'Create user' }}</button>
+      <app-form-section
+        title="Identity & Access"
+        subtitle="Capture user basics and assign operational role."
+      >
+        <div class="erp-grid">
+          <div class="erp-field">
+            <label for="fullName">Full Name</label>
+            <input id="fullName" pInputText formControlName="fullName" />
+          </div>
+          <div class="erp-field">
+            <label for="email">Email</label>
+            <input id="email" pInputText formControlName="email" />
+          </div>
+          <div class="erp-field">
+            <label for="phoneNumber">Phone Number</label>
+            <input id="phoneNumber" pInputText formControlName="phoneNumber" />
+          </div>
+          <div class="erp-field">
+            <label for="role">Role</label>
+            <p-select
+              inputId="role"
+              [options]="roleSelectOptions"
+              optionLabel="label"
+              optionValue="value"
+              formControlName="role"
+              appendTo="body"
+            ></p-select>
+          </div>
+          <label class="erp-checkbox">
+            <input type="checkbox" formControlName="isActive" />
+            <span>Active User</span>
+          </label>
+        </div>
+      </app-form-section>
+    </div>
+
+    <div form-card-actions class="erp-actions">
+      <button pButton type="submit" [label]="userId ? 'Update User' : 'Create User'" icon="pi pi-check"></button>
+    </div>
+
+    <div form-card-aside class="cm-panel-soft created" *ngIf="inviteExpiresAtUtc && !userId">
+      <h3>User created</h3>
+      <p>Welcome & activation email sent successfully. The secure setup link expires at:</p>
+      <textarea rows="2" readonly>{{ inviteExpiresAtUtc | date:'medium':'UTC' }} UTC</textarea>
+    </div>
+  </app-form-shell>
 </form>
-
-<section class="created" *ngIf="temporaryPasswordShown && !userId">
-  <h3>User created</h3>
-  <p>Share this temporary password securely with the user. They will set a new password on first sign-in.</p>
-  <textarea rows="2" readonly>{{ temporaryPasswordShown }}</textarea>
-  <button type="button" (click)="copyTempPassword()">Copy password</button>
-</section>

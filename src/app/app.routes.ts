@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-import { firstLoginPageGuard } from './core/guards/first-login-page.guard';
 import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
@@ -8,11 +7,6 @@ export const routes: Routes = [
   { path: 'login', loadComponent: () => import('./features/auth/login/login').then((c) => c.LoginComponent) },
   { path: 'register', loadComponent: () => import('./features/auth/register/register').then((c) => c.RegisterComponent) },
   { path: 'set-password', loadComponent: () => import('./features/auth/set-password/set-password').then((c) => c.SetPasswordComponent) },
-  {
-    path: 'first-login',
-    canActivate: [firstLoginPageGuard],
-    loadComponent: () => import('./features/auth/first-login/first-login').then((c) => c.FirstLoginComponent)
-  },
   { path: 'access-denied', loadComponent: () => import('./features/access-denied/access-denied').then((c) => c.AccessDeniedComponent) },
 
   { path: 'dashboard', canActivate: [authGuard, roleGuard], data: { roles: ['Admin'] }, loadComponent: () => import('./features/dashboard/dashboard').then((c) => c.DashboardComponent) },

@@ -1,25 +1,23 @@
 <section class="page-card p-4">
+  <div class="crud-toolbar">
+    <a pButton routerLink="/users/new" icon="pi pi-plus" label="New"></a>
+  </div>
+
   <div class="head-row">
     <div>
       <h2>User Management</h2>
-      <p>Manage staff lifecycle, role assignments, and onboarding status.</p>
+      <p>Manage staff lifecycle and role assignments.</p>
     </div>
-    <a pButton routerLink="/users/new" icon="pi pi-plus" label="Add User"></a>
-  </div>
-
-  <div class="filter-grid">
-    <input pInputText type="text" [(ngModel)]="search" placeholder="Search name, email, phone" />
-    <p-select [options]="roleOptions" optionLabel="label" optionValue="value" [(ngModel)]="role"></p-select>
-    <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [(ngModel)]="isActive"></p-select>
-    <div class="actions">
-      <button pButton type="button" icon="pi pi-search" label="Apply" (click)="load()"></button>
-      <button pButton type="button" icon="pi pi-refresh" label="Reset" severity="secondary" outlined="true" (click)="clearFilters()"></button>
+    <div class="search-wrap">
+      <i class="pi pi-search"></i>
+      <input pInputText type="text" [(ngModel)]="search" (ngModelChange)="onSearchChange()" placeholder="Search..." />
+      <button pButton type="button" icon="pi pi-times" text="true" rounded="true" (click)="clearSearch()"></button>
     </div>
   </div>
 
   <p class="error" *ngIf="error">{{ error }}</p>
 
-  <p-table [value]="users" [loading]="loading" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" responsiveLayout="scroll" styleClass="p-datatable-sm">
+  <p-table [value]="users" [loading]="loading" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" responsiveLayout="scroll" styleClass="p-datatable-sm p-datatable-gridlines">
     <ng-template pTemplate="header">
       <tr>
         <th>Name</th>
@@ -43,7 +41,6 @@
         <td>
           <div class="row-actions">
             <a pButton [routerLink]="['/users', user.id, 'edit']" icon="pi pi-pencil" severity="secondary" outlined="true" size="small"></a>
-            <button pButton type="button" icon="pi pi-key" severity="contrast" size="small" pTooltip="Reset temporary password" (click)="resetPassword(user)"></button>
             <button pButton type="button" icon="pi pi-trash" severity="danger" outlined="true" size="small" (click)="delete(user)"></button>
           </div>
         </td>

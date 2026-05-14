@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -6,21 +6,20 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
-import { TooltipModule } from 'primeng/tooltip';
-import { ConfirmationService, MessageService, SelectItem } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { UserManagementService } from '../../services/user-management';
-import { User, UserRole } from '../../models/user.model';
+import { User } from '../../models/user.model';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, TableModule, ButtonModule, InputTextModule, SelectModule, TagModule, TooltipModule],
+  imports: [CommonModule, RouterLink, FormsModule, TableModule, ButtonModule, InputTextModule, TagModule],
   templateUrl: './user-list.html',
   styleUrl: './user-list.scss'
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent implements OnInit, OnDestroy {
   private readonly userService = inject(UserManagementService);
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
@@ -30,31 +29,30 @@ export class UserListComponent implements OnInit {
   error = '';
 
   search = '';
-  role: UserRole | '' = '';
-  isActive: '' | 'true' | 'false' = '';
-
-  readonly roles: UserRole[] = ['Admin', 'Project Manager', 'Engineer', 'Accountant', 'Client'];
-  readonly roleOptions: SelectItem[] = [{ label: 'All Roles', value: '' }, ...this.roles.map((r) => ({ label: r, value: r }))];
-  readonly statusOptions: SelectItem[] = [
-    { label: 'All Status', value: '' },
-    { label: 'Active', value: 'true' },
-    { label: 'Inactive', value: 'false' }
-  ];
+  private readonly destroy$ = new Subject<void>();
+  private readonly search$ = new Subject<string>();
 
   ngOnInit(): void {
+    this.search$
+      .pipe(debounceTime(250), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => this.load());
+
     this.load();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   onboardingLabel(user: User): string {
-    if (user.mustChangePassword) return 'Invite Pending';
-    if (user.isFirstLogin) return 'First Login Pending';
-    return 'Active';
+    return user.isFirstLogin ? 'Invite Pending' : 'Active';
   }
 
   load(): void {
     this.loading = true;
     this.error = '';
-    this.userService.getAll({ search: this.search, role: this.role, isActive: this.isActive }).subscribe({
+    this.userService.getAll({ search: this.search }).subscribe({
       next: (res) => {
         this.users = res.data ?? [];
         this.loading = false;
@@ -66,11 +64,13 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  clearFilters(): void {
+  clearSearch(): void {
     this.search = '';
-    this.role = '';
-    this.isActive = '';
     this.load();
+  }
+
+  onSearchChange(): void {
+    this.search$.next(this.search.trim());
   }
 
   toggle(user: User): void {
@@ -81,22 +81,6 @@ export class UserListComponent implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         this.messageService.add({ severity: 'error', summary: 'Update Failed', detail: err.error?.message || 'Could not update user status.' });
-      }
-    });
-  }
-
-  resetPassword(user: User): void {
-    const pwd = window.prompt(`Set temporary password for ${user.fullName} (min 8 chars):`);
-    if (pwd == null || pwd.length < 8) return;
-
-    this.userService.adminResetTemporaryPassword(user.id, pwd).subscribe({
-      next: (res) => {
-        const detail = res.data?.temporaryPassword ? `Temporary password: ${res.data.temporaryPassword}` : (res.message || 'Password reset.');
-        this.messageService.add({ severity: 'success', summary: 'Password Reset', detail, life: 8000 });
-        this.load();
-      },
-      error: (err: HttpErrorResponse) => {
-        this.messageService.add({ severity: 'error', summary: 'Reset Failed', detail: err.error?.message || 'Reset failed.' });
       }
     });
   }

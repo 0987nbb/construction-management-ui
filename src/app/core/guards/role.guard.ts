@@ -8,7 +8,6 @@ export const roleGuard: CanActivateFn = (route) => {
   const requiredRoles = route.data?.['roles'] as string[] | undefined;
 
   if (!authService.isAuthenticated()) return router.createUrlTree(['/login']);
-  if (authService.requiresFirstLoginCompletion()) return router.createUrlTree(['/first-login']);
   if (!requiredRoles?.length) return true;
 
   const role = authService.getRole()?.toLowerCase();

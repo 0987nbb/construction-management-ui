@@ -1,2 +1,13 @@
-.card{display:grid;gap:.75rem;background:#fff;padding:1rem;border-radius:12px;max-width:560px}
-.invite{margin-top:1rem;background:#eef9ff;padding:1rem;border-radius:12px;max-width:560px}.invite textarea{width:100%;margin:.5rem 0}
+.created h3 {
+  margin: 0 0 0.4rem;
+  color: #0f172a;
+}
+
+.created p {
+  margin: 0 0 0.6rem;
+  color: #475569;
+}
+
+.created textarea {
+  width: 100%;
+}

@@ -1,0 +1,68 @@
+:host {
+  display: block;
+}
+
+.erp-form-shell {
+  width: min(100%, 1024px);
+  display: grid;
+  gap: 1rem;
+}
+
+.erp-back-link {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--text-base);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.erp-form-card {
+  background: var(--surface-1);
+  border: 1px solid var(--border-soft);
+  border-radius: 1.1rem;
+  box-shadow: var(--shadow-soft);
+  overflow: clip;
+}
+
+.erp-form-header {
+  padding: 1.25rem 1.25rem 0.5rem;
+}
+
+.erp-form-header h2 {
+  margin: 0;
+  font-size: clamp(1.15rem, 1.8vw, 1.7rem);
+  color: var(--text-strong);
+  letter-spacing: -0.02em;
+}
+
+.erp-form-header p {
+  margin: 0.35rem 0 0;
+  color: var(--text-muted);
+}
+
+.erp-form-body {
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.erp-form-footer {
+  border-top: 1px solid var(--border-soft);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), #fff);
+  padding: 0.9rem 1.25rem;
+}
+
+.erp-form-footer.sticky {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+}
+
+@media (max-width: 768px) {
+  .erp-form-header,
+  .erp-form-body,
+  .erp-form-footer {
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
+  }
+}

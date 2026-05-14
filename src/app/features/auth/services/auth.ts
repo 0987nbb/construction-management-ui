@@ -12,10 +12,15 @@ export interface AuthResult {
   isFirstLogin?: boolean;
 }
 
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}
+
 interface JwtPayload {
   exp?: number;
   role?: string;
-  is_first_login?: string | boolean;
   ['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']?: string;
 }
 
@@ -36,6 +41,10 @@ export class AuthService {
 
   setPassword(data: { token: string; password: string }): Observable<AuthResult> {
     return this.http.post<AuthResult>(`${this.apiUrl}/set-password`, data);
+  }
+
+  validateSetupToken(token: string): Observable<ApiResponse<boolean>> {
+    return this.http.get<ApiResponse<boolean>>(`${this.apiUrl}/validate-setup-token`, { params: { token } });
   }
 
   completeFirstLogin(payload: {
@@ -78,13 +87,6 @@ export class AuthService {
     return localStorage.getItem(this.roleStorageKey);
   }
 
-  /** When true, the user may only call profile + complete-first-login until onboarding finishes. */
-  requiresFirstLoginCompletion(): boolean {
-    const raw = localStorage.getItem(this.tokenStorageKey);
-    if (!raw || this.isTokenExpired(raw)) return false;
-    return this.isFirstLoginClaimTrue(raw);
-  }
-
   getLandingRouteByRole(): string {
     const role = this.getRole();
     switch (role) {
@@ -107,20 +109,13 @@ export class AuthService {
     return !!this.getToken();
   }
 
-  /** Main app chrome (sidebar) only after onboarding is complete. */
   showMainChrome(): boolean {
-    return this.isAuthenticated() && !this.requiresFirstLoginCompletion();
+    return this.isAuthenticated();
   }
 
   private getRoleFromToken(token: string): string | null {
     const payload = this.decodePayload(token);
     return payload?.role ?? payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ?? null;
-  }
-
-  private isFirstLoginClaimTrue(token: string): boolean {
-    const payload = this.decodePayload(token);
-    const v = payload?.is_first_login;
-    return v === true || v === 'true';
   }
 
   private isTokenExpired(token: string): boolean {
