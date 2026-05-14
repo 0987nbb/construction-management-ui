@@ -25,6 +25,10 @@ export class App {
   private readonly router = inject(Router);
 
   readonly role = computed(() => this.authService.getRole());
+  readonly welcomeTitle = computed(() => {
+    const role = this.role();
+    return role ? `Welcome, ${role}` : 'Welcome';
+  });
   readonly sidebarOpen = signal(false);
 
   readonly menu = computed(() => {
@@ -36,14 +40,15 @@ export class App {
         { label: 'Dashboard', route: '/dashboard', icon: 'pi pi-home' },
         { label: 'Users', route: '/users', icon: 'pi pi-users' },
         { label: 'Clients', route: '/clients', icon: 'pi pi-briefcase' },
+        { label: 'Projects', route: '/projects', icon: 'pi pi-sitemap' },
         ...common
       ];
     }
 
-    if (role === 'Project Manager') return [{ label: 'Manager Dashboard', route: '/pm/dashboard', icon: 'pi pi-chart-line' }, ...common];
-    if (role === 'Engineer') return [{ label: 'Engineer Dashboard', route: '/engineer/dashboard', icon: 'pi pi-cog' }, ...common];
-    if (role === 'Accountant') return [{ label: 'Finance Dashboard', route: '/accountant/dashboard', icon: 'pi pi-wallet' }, ...common];
-    if (role === 'Client') return [{ label: 'Client Dashboard', route: '/client/dashboard', icon: 'pi pi-building' }, ...common];
+    if (role === 'Project Manager') return [{ label: 'Manager Dashboard', route: '/pm/dashboard', icon: 'pi pi-chart-line' }, { label: 'Projects', route: '/projects', icon: 'pi pi-sitemap' }, ...common];
+    if (role === 'Engineer') return [{ label: 'Engineer Dashboard', route: '/engineer/dashboard', icon: 'pi pi-cog' }, { label: 'Projects', route: '/projects', icon: 'pi pi-sitemap' }, ...common];
+    if (role === 'Accountant') return [{ label: 'Finance Dashboard', route: '/accountant/dashboard', icon: 'pi pi-wallet' }, { label: 'Projects', route: '/projects', icon: 'pi pi-sitemap' }, ...common];
+    if (role === 'Client') return [{ label: 'Client Dashboard', route: '/client/dashboard', icon: 'pi pi-building' }, { label: 'Projects', route: '/projects', icon: 'pi pi-sitemap' }, ...common];
 
     return [];
   });

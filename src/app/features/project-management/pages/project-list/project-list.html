@@ -1,0 +1,73 @@
+<section class="page-card p-4">
+  <div class="crud-toolbar" *ngIf="canManage()">
+    <button pButton type="button" icon="pi pi-plus" label="New" (click)="openCreateDialog()"></button>
+  </div>
+
+  <div class="head-row">
+    <div>
+      <h2>Project Management</h2>
+      <p>Start and control construction lifecycle through status, progress, and budget tracking.</p>
+    </div>
+    <div class="search-wrap">
+      <i class="pi pi-search"></i>
+      <input pInputText type="text" [(ngModel)]="search" (ngModelChange)="onSearchChange()" placeholder="Search..." />
+      <button pButton type="button" icon="pi pi-times" text="true" rounded="true" (click)="clearSearch()"></button>
+    </div>
+  </div>
+
+  <p class="error" *ngIf="error">{{ error }}</p>
+
+  <p-table [value]="projects" [loading]="loading" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" responsiveLayout="scroll" styleClass="p-datatable-sm p-datatable-gridlines">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Project</th>
+        <th>Client</th>
+        <th>Status</th>
+        <th>Progress</th>
+        <th>Budget</th>
+        <th>Spent</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-project>
+      <tr>
+        <td>{{ project.projectName }}</td>
+        <td>{{ project.clientName }}</td>
+        <td><p-tag [value]="project.status" [severity]="statusSeverity(project.status)"></p-tag></td>
+        <td>
+          <p-progressbar [value]="project.progressPercentage || 0" [showValue]="true"></p-progressbar>
+        </td>
+        <td>{{ project.budget | currency }}</td>
+        <td>{{ project.spentAmount | currency }}</td>
+        <td>
+          <div class="row-actions">
+            <button *ngIf="role() !== 'Accountant'" pButton type="button" icon="pi pi-eye" severity="secondary" outlined="true" size="small" (click)="openDetails(project)"></button>
+            <button *ngIf="canManage()" pButton type="button" icon="pi pi-pencil" severity="secondary" outlined="true" size="small" (click)="openEditDialog(project)"></button>
+            <button *ngIf="canManage()" pButton type="button" icon="pi pi-trash" severity="danger" outlined="true" size="small" (click)="remove(project)"></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</section>
+
+<p-dialog
+  [(visible)]="showFormDialog"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: 'min(96vw, 980px)' }"
+  [contentStyle]="{ padding: '0.5rem', maxHeight: '80vh', overflow: 'auto' }"
+  [header]="editingProjectId ? 'Edit Project' : 'Create Project'"
+  (onHide)="closeFormDialog()"
+>
+  <app-project-form
+    *ngIf="showFormDialog"
+    [inDialog]="true"
+    [projectIdInput]="editingProjectId"
+    (saved)="handleFormSaved()"
+    (cancelled)="closeFormDialog()"
+  ></app-project-form>
+</p-dialog>

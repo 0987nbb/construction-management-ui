@@ -36,9 +36,7 @@ export class ClientFormComponent implements OnInit {
     phone: ['', [Validators.required]],
     address: ['', [Validators.required, Validators.minLength(5)]],
     company: ['', [Validators.required, Validators.minLength(2)]],
-    isActive: [true],
-    projectName: [''],
-    projectCode: ['']
+    isActive: [true]
   });
 
   ngOnInit(): void {
@@ -100,25 +98,8 @@ export class ClientFormComponent implements OnInit {
 
     this.clientService.update(this.clientId, payload).subscribe({
       next: () => {
-        const projectName = (v.projectName || '').trim();
-        const projectCode = (v.projectCode || '').trim();
-
-        if (!projectName || !projectCode) {
-          this.loading = false;
-          this.finishSuccess();
-          return;
-        }
-
-        this.clientService.linkProject(this.clientId!, { projectName, projectCode }).subscribe({
-          next: () => {
-            this.loading = false;
-            this.finishSuccess();
-          },
-          error: (err: HttpErrorResponse) => {
-            this.error = err.error?.message || 'Client saved, but project linking failed.';
-            this.loading = false;
-          }
-        });
+        this.loading = false;
+        this.finishSuccess();
       },
       error: (err: HttpErrorResponse) => {
         this.error = err.error?.message || 'Failed to update client.';

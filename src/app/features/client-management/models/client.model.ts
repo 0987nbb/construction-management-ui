@@ -6,8 +6,8 @@ export interface ApiResponse<T> {
 
 export interface ClientProject {
   id: string;
-  name: string;
-  code: string;
+  projectName: string;
+  status: string;
 }
 
 export interface Client {

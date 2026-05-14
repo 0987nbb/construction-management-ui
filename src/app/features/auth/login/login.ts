@@ -17,6 +17,11 @@ export class LoginComponent {
 
   loginData = { email: '', password: '' };
 
+  constructor() {
+    // Prevent stale role/session (e.g., Admin) from appearing while switching users.
+    this.authService.clearSession();
+  }
+
   login(): void {
     this.authService.login(this.loginData).subscribe({
       next: (res: AuthResult) => {

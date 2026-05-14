@@ -1,0 +1,37 @@
+<form [formGroup]="form" (ngSubmit)="submit()" *ngIf="!loading">
+  <app-form-shell
+    [backLink]="''"
+    [stickyActions]="false"
+    [title]="projectId ? 'Edit Project' : 'Create Project'"
+    subtitle="Project lifecycle setup with status, budget, and execution progress."
+  >
+    <div form-card-body>
+      <p class="cm-state-error" *ngIf="error">{{ error }}</p>
+
+      <app-form-section title="Core Details" subtitle="Define project identity and ownership.">
+        <div class="erp-grid">
+          <div class="erp-field"><label for="projectName">Project Name</label><input id="projectName" pInputText formControlName="projectName" /></div>
+          <div class="erp-field"><label for="clientId">Client</label><p-select inputId="clientId" [options]="clientOptions" optionLabel="label" optionValue="value" formControlName="clientId" appendTo="body"></p-select></div>
+          <div class="erp-field erp-field-full"><label for="description">Description</label><textarea id="description" pTextarea formControlName="description" rows="3"></textarea></div>
+          <div class="erp-field"><label for="assignedEngineerId">Assigned Engineer</label><p-select inputId="assignedEngineerId" [options]="engineerOptions" optionLabel="label" optionValue="value" formControlName="assignedEngineerId" appendTo="body" [showClear]="true"></p-select></div>
+          <div class="erp-field"><label for="status">Status</label><p-select inputId="status" [options]="statusOptions" optionLabel="label" optionValue="value" formControlName="status" appendTo="body"></p-select></div>
+        </div>
+      </app-form-section>
+
+      <app-form-section title="Timeline & Finance" subtitle="Track schedule and budget performance.">
+        <div class="erp-grid">
+          <div class="erp-field"><label for="startDate">Start Date</label><input id="startDate" pInputText type="date" formControlName="startDate" /></div>
+          <div class="erp-field"><label for="endDate">End Date</label><input id="endDate" pInputText type="date" formControlName="endDate" /></div>
+          <div class="erp-field"><label for="budget">Budget</label><p-inputNumber inputId="budget" mode="currency" currency="USD" formControlName="budget"></p-inputNumber></div>
+          <div class="erp-field"><label for="spentAmount">Spent Amount</label><p-inputNumber inputId="spentAmount" mode="currency" currency="USD" formControlName="spentAmount"></p-inputNumber></div>
+          <div class="erp-field"><label for="progress">Progress (%)</label><p-inputNumber inputId="progress" [min]="0" [max]="100" formControlName="progressPercentage"></p-inputNumber></div>
+        </div>
+      </app-form-section>
+    </div>
+
+    <div form-card-actions class="erp-actions">
+      <button pButton type="button" severity="secondary" [outlined]="true" label="Cancel" icon="pi pi-times" (click)="onCancel()"></button>
+      <button pButton type="submit" [label]="projectId ? 'Update Project' : 'Create Project'" icon="pi pi-check"></button>
+    </div>
+  </app-form-shell>
+</form>

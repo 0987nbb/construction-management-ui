@@ -31,8 +31,4 @@ export class ClientManagementService {
   remove(id: string): Observable<ApiResponse<boolean>> {
     return this.http.delete<ApiResponse<boolean>>(`${this.apiUrl}/${id}`);
   }
-
-  linkProject(id: string, payload: { projectName: string; projectCode: string }): Observable<ApiResponse<Client>> {
-    return this.http.post<ApiResponse<Client>>(`${this.apiUrl}/${id}/projects`, payload);
-  }
 }

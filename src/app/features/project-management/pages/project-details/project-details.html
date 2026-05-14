@@ -1,0 +1,18 @@
+<section class="page-card p-4" *ngIf="project as p">
+  <a routerLink="/projects" class="cm-back-link">Back To Projects</a>
+  <h2 class="section-title">{{ p.projectName }}</h2>
+  <p class="section-subtitle">{{ p.description || 'No description provided.' }}</p>
+
+  <div class="erp-grid mt-3">
+    <div class="erp-field"><label>Client</label><div>{{ p.clientName }}</div></div>
+    <div class="erp-field"><label>Status</label><p-tag [value]="p.status" [severity]="statusSeverity(p.status)"></p-tag></div>
+    <div class="erp-field"><label>Assigned Engineer</label><div>{{ p.assignedEngineerName || 'Unassigned' }}</div></div>
+    <div class="erp-field"><label>Progress</label><p-progressbar [value]="p.progressPercentage" [showValue]="true"></p-progressbar></div>
+    <div class="erp-field"><label>Start Date</label><div>{{ p.startDate ? (p.startDate | date:'mediumDate') : '-' }}</div></div>
+    <div class="erp-field"><label>End Date</label><div>{{ p.endDate ? (p.endDate | date:'mediumDate') : '-' }}</div></div>
+    <div class="erp-field"><label>Budget</label><div>{{ p.budget | currency }}</div></div>
+    <div class="erp-field"><label>Spent Amount</label><div>{{ p.spentAmount | currency }}</div></div>
+  </div>
+</section>
+
+<p class="error" *ngIf="error">{{ error }}</p>

@@ -17,6 +17,8 @@ export const routes: Routes = [
   { path: 'clients', canActivate: [authGuard, roleGuard], data: { roles: ['Admin'] }, loadComponent: () => import('./features/client-management/pages/client-list/client-list').then((c) => c.ClientListComponent) },
   { path: 'clients/new', canActivate: [authGuard, roleGuard], data: { roles: ['Admin'] }, loadComponent: () => import('./features/client-management/pages/client-form/client-form').then((c) => c.ClientFormComponent) },
   { path: 'clients/:id/edit', canActivate: [authGuard, roleGuard], data: { roles: ['Admin'] }, loadComponent: () => import('./features/client-management/pages/client-form/client-form').then((c) => c.ClientFormComponent) },
+  { path: 'projects', canActivate: [authGuard, roleGuard], data: { roles: ['Admin', 'Project Manager', 'Engineer', 'Accountant', 'Client'] }, loadComponent: () => import('./features/project-management/pages/project-list/project-list').then((c) => c.ProjectListComponent) },
+  { path: 'projects/:id', canActivate: [authGuard, roleGuard], data: { roles: ['Admin', 'Project Manager', 'Engineer', 'Client'] }, loadComponent: () => import('./features/project-management/pages/project-details/project-details').then((c) => c.ProjectDetailsComponent) },
 
   { path: 'pm/dashboard', canActivate: [authGuard, roleGuard], data: { roles: ['Project Manager'] }, loadComponent: () => import('./features/role-dashboards/project-manager/project-manager-dashboard').then((c) => c.ProjectManagerDashboardComponent) },
   { path: 'engineer/dashboard', canActivate: [authGuard, roleGuard], data: { roles: ['Engineer'] }, loadComponent: () => import('./features/role-dashboards/engineer/engineer-dashboard').then((c) => c.EngineerDashboardComponent) },

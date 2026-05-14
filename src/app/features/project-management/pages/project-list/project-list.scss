@@ -1,0 +1,85 @@
+.crud-toolbar {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+}
+
+.head-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.head-row h2 {
+  margin: 0;
+}
+
+.head-row p {
+  margin: 0.3rem 0 0;
+  color: #64748b;
+}
+
+.search-wrap {
+  position: relative;
+  min-width: 280px;
+}
+
+.search-wrap > i {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+}
+
+.search-wrap input {
+  width: 100%;
+  padding-left: 2.4rem;
+  padding-right: 2.3rem;
+}
+
+.search-wrap button {
+  position: absolute;
+  right: 0.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.row-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.error {
+  color: #b91c1c;
+  margin: 0 0 1rem;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  white-space: nowrap;
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+
+:host ::ng-deep .p-progressbar {
+  min-width: 160px;
+}
+
+@media (max-width: 992px) {
+  .head-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-wrap {
+    width: 100%;
+    min-width: 0;
+  }
+}
