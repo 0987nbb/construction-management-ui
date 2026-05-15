@@ -6,6 +6,8 @@ export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', loadComponent: () => import('./features/auth/login/login').then((c) => c.LoginComponent) },
   { path: 'register', loadComponent: () => import('./features/auth/register/register').then((c) => c.RegisterComponent) },
+  { path: 'forgot-password', loadComponent: () => import('./features/auth/forgot-password/forgot-password').then((c) => c.ForgotPasswordComponent) },
+  { path: 'reset-password', loadComponent: () => import('./features/auth/reset-password/reset-password').then((c) => c.ResetPasswordComponent) },
   { path: 'set-password', loadComponent: () => import('./features/auth/set-password/set-password').then((c) => c.SetPasswordComponent) },
   { path: 'access-denied', loadComponent: () => import('./features/access-denied/access-denied').then((c) => c.AccessDeniedComponent) },
 

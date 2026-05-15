@@ -47,6 +47,18 @@ export class AuthService {
     return this.http.get<ApiResponse<boolean>>(`${this.apiUrl}/validate-setup-token`, { params: { token } });
   }
 
+  requestPasswordReset(email: string): Observable<ApiResponse<boolean>> {
+    return this.http.post<ApiResponse<boolean>>(`${this.apiUrl}/request-password-reset`, { email });
+  }
+
+  validateResetToken(token: string): Observable<ApiResponse<boolean>> {
+    return this.http.get<ApiResponse<boolean>>(`${this.apiUrl}/validate-reset-token`, { params: { token } });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<ApiResponse<boolean>> {
+    return this.http.post<ApiResponse<boolean>>(`${this.apiUrl}/reset-password`, { token, newPassword });
+  }
+
   completeFirstLogin(payload: {
     currentPassword: string;
     newPassword: string;

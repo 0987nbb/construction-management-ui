@@ -1,54 +1,54 @@
-<div class="auth-page">
-  <div class="auth-card">
-    <h1>Create client account</h1>
-    <p>Public registration is for external clients only. Staff accounts are issued by your administrator.</p>
-
-    <form #registerForm="ngForm" (ngSubmit)="register()" novalidate>
-      <div class="field">
-        <label for="fullName">Full Name</label>
-        <input
-          id="fullName"
-          name="fullName"
-          type="text"
-          placeholder="Enter your full name"
-          autocomplete="name"
-          required
-          [(ngModel)]="registerData.fullName"
-        />
-      </div>
-
-      <div class="field">
-        <label for="email">Email</label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          placeholder="Enter your email"
-          autocomplete="email"
-          required
-          [(ngModel)]="registerData.email"
-        />
-      </div>
-
-      <div class="field">
-        <label for="password">Password</label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          placeholder="Create password"
-          autocomplete="new-password"
-          required
-          [(ngModel)]="registerData.password"
-        />
-      </div>
-
-      <button type="submit">Sign Up</button>
-    </form>
-
-    <div class="footer-link">
-      <span>Already have an account?</span>
-      <a routerLink="/login">Sign in</a>
+<section class="auth-layout">
+  <aside class="auth-hero">
+    <h1>Create Your Client Portal Access</h1>
+    <p>Register once to collaborate with project teams, review milestones, and follow financial progress in real time.</p>
+    <div class="auth-kpis">
+      <span class="auth-kpi">Client Progress Visibility</span>
+      <span class="auth-kpi">Secure Document Access</span>
+      <span class="auth-kpi">Milestone Notifications</span>
     </div>
-  </div>
-</div>
+  </aside>
+
+  <main class="auth-panel">
+    <div class="auth-card">
+      <header class="auth-head">
+        <h2>Create Client Account</h2>
+        <p>Public registration is available for client accounts only.</p>
+      </header>
+
+      <form class="auth-form" [formGroup]="form" (ngSubmit)="register()" novalidate>
+        <div class="auth-field">
+          <label for="reg-fullname">Full name</label>
+          <input id="reg-fullname" type="text" autocomplete="name" formControlName="fullName" placeholder="Ali Raza" />
+          <p class="auth-error" *ngIf="form.controls.fullName.touched && form.controls.fullName.invalid">Full name is required (min 3 characters).</p>
+        </div>
+
+        <div class="auth-field">
+          <label for="reg-email">Email</label>
+          <input id="reg-email" type="email" autocomplete="email" formControlName="email" placeholder="you@company.com" />
+          <p class="auth-error" *ngIf="form.controls.email.touched && form.controls.email.invalid">Enter a valid email address.</p>
+        </div>
+
+        <div class="auth-field">
+          <label for="reg-password">Password</label>
+          <input id="reg-password" type="password" autocomplete="new-password" formControlName="password" placeholder="At least 8 chars with symbol" />
+          <p class="auth-error" *ngIf="form.controls.password.touched && form.controls.password.invalid">Use uppercase, lowercase, number, and symbol.</p>
+        </div>
+
+        <div class="auth-field">
+          <label for="reg-confirm">Confirm password</label>
+          <input id="reg-confirm" type="password" autocomplete="new-password" formControlName="confirmPassword" placeholder="Re-enter password" />
+          <p class="auth-error" *ngIf="form.controls.confirmPassword.touched && form.controls.confirmPassword.invalid">Please confirm your password.</p>
+        </div>
+
+        <p class="auth-error" *ngIf="error">{{ error }}</p>
+        <button class="auth-btn" type="submit" [disabled]="submitting">{{ submitting ? 'Creating Account...' : 'Create Account' }}</button>
+      </form>
+
+      <div class="auth-row">
+        <span class="auth-note">Already registered?</span>
+        <a class="auth-link" routerLink="/login">Sign in</a>
+      </div>
+    </div>
+  </main>
+</section>

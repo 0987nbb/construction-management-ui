@@ -1,37 +1,57 @@
 import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { AuthResult, AuthService } from '../services/auth';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../services/auth';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
-  styleUrl: './login.scss'
+  styleUrl: '../auth-ui.scss'
 })
 export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly fb = inject(FormBuilder);
 
-  loginData = { email: '', password: '' };
+  submitting = false;
+  error = '';
+
+  readonly form = this.fb.group({
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(255)]],
+    password: ['', [Validators.required]]
+  });
 
   constructor() {
-    // Prevent stale role/session (e.g., Admin) from appearing while switching users.
     this.authService.clearSession();
   }
 
   login(): void {
-    this.authService.login(this.loginData).subscribe({
-      next: (res: AuthResult) => {
-        if (!res.token) return alert(res.message || 'Login failed');
+    this.error = '';
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    this.submitting = true;
+    const payload = this.form.getRawValue();
+    this.authService.login({ email: payload.email ?? '', password: payload.password ?? '' }).subscribe({
+      next: (res) => {
+        this.submitting = false;
+        if (!res.token) {
+          this.error = res.message || 'Login failed';
+          return;
+        }
+
         this.authService.saveSession(res);
         this.router.navigateByUrl(this.authService.getLandingRouteByRole());
       },
       error: (err: HttpErrorResponse) => {
-        const message = (err.error && err.error.message) || (typeof err.error === 'string' ? err.error : '') || 'Login failed';
-        alert(message);
+        this.submitting = false;
+        this.error = err?.error?.message || 'Login failed';
       }
     });
   }
