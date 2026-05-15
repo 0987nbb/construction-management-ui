@@ -1,0 +1,42 @@
+<section class="page-card p-4" *ngIf="site as s">
+  <a routerLink="/sites" class="cm-back-link">Back To Sites</a>
+  <h2 class="section-title">{{ s.siteName }}</h2>
+  <p class="section-subtitle">{{ s.description || 'No description provided.' }}</p>
+
+  <div class="erp-grid mt-3">
+    <div class="erp-field"><label>Project</label><div>{{ s.projectName }}</div></div>
+    <div class="erp-field"><label>Status</label><p-tag [value]="s.status" [severity]="statusSeverity(s.status)"></p-tag></div>
+    <div class="erp-field erp-field-full"><label>Progress</label><p-progressbar [value]="s.progressPercentage || 0" [showValue]="true"></p-progressbar></div>
+    <div class="erp-field"><label>Assigned Engineer</label><div>{{ s.assignedEngineerName || 'Unassigned' }}</div></div>
+    <div class="erp-field"><label>Location</label><div>{{ s.location }}</div></div>
+    <div class="erp-field" *ngIf="s.latitude != null && s.longitude != null"><label>Coordinates</label><div>{{ s.latitude }}, {{ s.longitude }}</div></div>
+    <div class="erp-field" *ngIf="mapsUrl(s) as url"><label>Map</label><a [href]="url" target="_blank" rel="noopener">Open in Google Maps</a></div>
+    <div class="erp-field"><label>Start Date</label><div>{{ s.startDate ? (s.startDate | date:'mediumDate') : '-' }}</div></div>
+    <div class="erp-field"><label>End Date</label><div>{{ s.endDate ? (s.endDate | date:'mediumDate') : '-' }}</div></div>
+  </div>
+
+  <div class="manage-panel mt-4" *ngIf="canAssignEngineer()">
+    <h3>Planning Actions</h3>
+    <div class="manage-row">
+      <label>Assign Engineer</label>
+      <p-select [options]="engineerOptions" optionLabel="label" optionValue="value" [(ngModel)]="engineerDraft" appendTo="body" [showClear]="true"></p-select>
+      <button pButton type="button" label="Save Assignment" icon="pi pi-user" (click)="saveEngineer()"></button>
+    </div>
+  </div>
+
+  <div class="manage-panel mt-4" *ngIf="canUpdateExecution()">
+    <h3>{{ canManage() ? 'Site Execution' : 'Update Site Progress' }}</h3>
+    <div class="manage-row">
+      <label>Status</label>
+      <p-select [options]="statusOptions" optionLabel="label" optionValue="value" [(ngModel)]="statusDraft" appendTo="body"></p-select>
+      <button pButton type="button" label="Save Status" icon="pi pi-check" (click)="saveStatus()"></button>
+    </div>
+    <div class="manage-row">
+      <label>Progress (%)</label>
+      <p-inputNumber [(ngModel)]="progressDraft" [min]="0" [max]="100"></p-inputNumber>
+      <button pButton type="button" label="Save Progress" icon="pi pi-chart-line" (click)="saveProgress()"></button>
+    </div>
+  </div>
+</section>
+
+<p class="error" *ngIf="error">{{ error }}</p>

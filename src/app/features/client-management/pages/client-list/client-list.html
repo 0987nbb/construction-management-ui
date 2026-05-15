@@ -1,5 +1,5 @@
 <section class="page-card p-4">
-  <div class="crud-toolbar">
+  <div class="crud-toolbar" *ngIf="canManageClients">
     <button pButton type="button" icon="pi pi-plus" label="New" (click)="openCreateDialog()"></button>
   </div>
 
@@ -26,7 +26,7 @@
         <th>Phone</th>
         <th>Status</th>
         <th>Projects</th>
-        <th>Actions</th>
+        <th *ngIf="canManageClients">Actions</th>
       </tr>
     </ng-template>
 
@@ -38,7 +38,7 @@
         <td>{{ client.phone }}</td>
         <td><p-tag [value]="client.isActive ? 'Active' : 'Inactive'" [severity]="client.isActive ? 'success' : 'secondary'"></p-tag></td>
         <td>{{ client.projects.length }}</td>
-        <td>
+        <td *ngIf="canManageClients">
           <div class="row-actions">
             <button pButton type="button" icon="pi pi-pencil" severity="secondary" outlined="true" size="small" (click)="openEditDialog(client)"></button>
             <button pButton type="button" icon="pi pi-trash" severity="danger" outlined="true" size="small" (click)="delete(client)"></button>
@@ -49,13 +49,14 @@
 
     <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="7">No clients found.</td>
+        <td [attr.colspan]="canManageClients ? 7 : 6">No clients found.</td>
       </tr>
     </ng-template>
   </p-table>
 </section>
 
 <p-dialog
+  *ngIf="canManageClients"
   [(visible)]="showFormDialog"
   [modal]="true"
   [draggable]="false"

@@ -1,0 +1,42 @@
+<form [formGroup]="form" (ngSubmit)="submit()" *ngIf="!loading">
+  <app-form-shell
+    [backLink]="''"
+    [stickyActions]="false"
+    [title]="siteId ? 'Edit Site' : 'Create Site'"
+    subtitle="Physical work location for construction execution and engineer assignment."
+  >
+    <div form-card-body>
+      <p class="cm-state-error" *ngIf="error">{{ error }}</p>
+
+      <app-form-section title="Site Details" subtitle="Link the site to a project and define its identity.">
+        <div class="erp-grid">
+          <div class="erp-field"><label for="siteName">Site Name</label><input id="siteName" pInputText formControlName="siteName" /></div>
+          <div class="erp-field"><label for="projectId">Project</label><p-select inputId="clientId" [options]="projectOptions" optionLabel="label" optionValue="value" formControlName="projectId" appendTo="body"></p-select></div>
+          <div class="erp-field erp-field-full"><label for="description">Description</label><textarea id="description" pTextarea formControlName="description" rows="3"></textarea></div>
+          <div class="erp-field"><label for="assignedEngineerId">Assigned Engineer</label><p-select inputId="assignedEngineerId" [options]="engineerOptions" optionLabel="label" optionValue="value" formControlName="assignedEngineerId" appendTo="body" [showClear]="true"></p-select></div>
+          <div class="erp-field"><label for="status">Status</label><p-select inputId="status" [options]="statusOptions" optionLabel="label" optionValue="value" formControlName="status" appendTo="body"></p-select></div>
+        </div>
+      </app-form-section>
+
+      <app-form-section title="Location" subtitle="Address and optional GPS coordinates for field teams.">
+        <div class="erp-grid">
+          <div class="erp-field erp-field-full"><label for="location">Address / Location</label><input id="location" pInputText formControlName="location" /></div>
+          <div class="erp-field"><label for="latitude">Latitude</label><p-inputNumber inputId="latitude" formControlName="latitude" [min]="-90" [max]="90" [maxFractionDigits]="6"></p-inputNumber></div>
+          <div class="erp-field"><label for="longitude">Longitude</label><p-inputNumber inputId="longitude" formControlName="longitude" [min]="-180" [max]="180" [maxFractionDigits]="6"></p-inputNumber></div>
+        </div>
+      </app-form-section>
+
+      <app-form-section title="Schedule" subtitle="Planned start and completion dates for this site.">
+        <div class="erp-grid">
+          <div class="erp-field"><label for="startDate">Start Date</label><input id="startDate" pInputText type="date" formControlName="startDate" /></div>
+          <div class="erp-field"><label for="endDate">End Date</label><input id="endDate" pInputText type="date" formControlName="endDate" /></div>
+        </div>
+      </app-form-section>
+    </div>
+
+    <div form-card-actions class="erp-actions">
+      <button pButton type="button" severity="secondary" [outlined]="true" label="Cancel" icon="pi pi-times" (click)="onCancel()"></button>
+      <button pButton type="submit" [label]="siteId ? 'Update Site' : 'Create Site'" icon="pi pi-check"></button>
+    </div>
+  </app-form-shell>
+</form>

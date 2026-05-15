@@ -15,6 +15,7 @@ import { ProjectManagementService } from '../../services/project-management.serv
 import { Project, ProjectFinancial, ProjectStatus, ApiResponse } from '../../models/project.model';
 import { ProjectFormComponent } from '../project-form/project-form';
 import { AuthService } from '../../../auth/services/auth';
+import { RolePermissionsService } from '../../../../core/services/role-permissions.service';
 
 @Component({
   selector: 'app-project-list',
@@ -39,6 +40,7 @@ export class ProjectListComponent implements OnInit, OnDestroy {
   private readonly messageService = inject(MessageService);
   private readonly confirmationService = inject(ConfirmationService);
   private readonly authService = inject(AuthService);
+  private readonly permissions = inject(RolePermissionsService);
   private readonly router = inject(Router);
 
   projects: Project[] = [];
@@ -51,7 +53,8 @@ export class ProjectListComponent implements OnInit, OnDestroy {
   private readonly search$ = new Subject<string>();
 
   readonly role = signal<string | null>(this.authService.getRole());
-  readonly canManage = computed(() => this.role() === 'Admin' || this.role() === 'Project Manager');
+  readonly canManage = computed(() => this.permissions.canManageProjects());
+  readonly canDelete = computed(() => this.permissions.canDeleteProjects());
 
   ngOnInit(): void {
     this.search$.pipe(debounceTime(250), distinctUntilChanged(), takeUntil(this.destroy$)).subscribe(() => this.load());

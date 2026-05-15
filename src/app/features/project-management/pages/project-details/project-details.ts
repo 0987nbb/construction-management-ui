@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -6,6 +6,7 @@ import { TagModule } from 'primeng/tag';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ProjectManagementService } from '../../services/project-management.service';
 import { Project } from '../../models/project.model';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-project-details',
@@ -14,19 +15,30 @@ import { Project } from '../../models/project.model';
   templateUrl: './project-details.html',
   styleUrl: './project-details.scss'
 })
-export class ProjectDetailsComponent implements OnInit {
+export class ProjectDetailsComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly projectService = inject(ProjectManagementService);
+  private readonly destroy$ = new Subject<void>();
 
   project: Project | null = null;
   loading = false;
   error = '';
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) return;
+    this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      const id = params.get('id');
+      if (id) this.loadProject(id);
+    });
+  }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private loadProject(id: string): void {
     this.loading = true;
+    this.error = '';
     this.projectService.getById(id).subscribe({
       next: (res) => {
         this.project = res.data;

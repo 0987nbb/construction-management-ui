@@ -1,0 +1,82 @@
+.crud-toolbar {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+}
+
+.head-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.head-row h2 {
+  margin: 0;
+}
+
+.head-row p {
+  margin: 0.3rem 0 0;
+  color: #64748b;
+}
+
+.filters-wrap {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-wrap {
+  position: relative;
+  min-width: 240px;
+}
+
+.search-wrap > i {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+}
+
+.search-wrap input {
+  width: 100%;
+  padding-left: 2.4rem;
+  padding-right: 2.3rem;
+}
+
+.search-wrap button {
+  position: absolute;
+  right: 0.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.row-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.location-cell {
+  max-width: 280px;
+  white-space: normal;
+}
+
+.error {
+  color: #b91c1c;
+  margin: 0 0 1rem;
+}
+
+@media (max-width: 992px) {
+  .head-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-wrap {
+    width: 100%;
+    min-width: 0;
+  }
+}

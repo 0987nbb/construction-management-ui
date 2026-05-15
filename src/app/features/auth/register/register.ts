@@ -42,8 +42,8 @@ export class RegisterComponent {
 
     this.submitting = true;
     this.authService.register({
-      fullName: value.fullName ?? '',
-      email: value.email ?? '',
+      fullName: (value.fullName ?? '').trim(),
+      email: (value.email ?? '').trim().toLowerCase(),
       password: value.password ?? ''
     }).subscribe({
       next: () => {
@@ -52,8 +52,16 @@ export class RegisterComponent {
       },
       error: (err: HttpErrorResponse) => {
         this.submitting = false;
-        this.error = err?.error?.message || 'Registration failed';
+        this.error = this.resolveAuthError(err, 'Unable to register right now.');
       }
     });
+  }
+
+  private resolveAuthError(err: HttpErrorResponse, fallback: string): string {
+    const apiMessage = err?.error?.message;
+    if (apiMessage) return apiMessage;
+    if (err.status === 0) return 'Network issue: unable to reach server.';
+    if (err.status === 409) return 'This email is already registered.';
+    return fallback;
   }
 }

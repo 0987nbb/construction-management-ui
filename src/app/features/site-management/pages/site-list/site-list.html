@@ -1,0 +1,70 @@
+<section class="page-card p-4">
+  <div class="crud-toolbar" *ngIf="canManage()">
+    <button pButton type="button" icon="pi pi-plus" label="New Site" (click)="openCreateDialog()"></button>
+  </div>
+
+  <div class="head-row">
+    <div>
+      <h2>Site Management</h2>
+      <p>Define physical construction work locations for projects and assign engineers.</p>
+    </div>
+    <div class="search-wrap">
+      <i class="pi pi-search"></i>
+      <input pInputText type="text" [(ngModel)]="search" (ngModelChange)="onSearchChange()" placeholder="Search..." />
+      <button pButton type="button" icon="pi pi-times" text="true" rounded="true" (click)="clearSearch()"></button>
+    </div>
+  </div>
+
+  <p class="error" *ngIf="error">{{ error }}</p>
+
+  <p-table [value]="sites" [loading]="loading" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 20, 50]" responsiveLayout="scroll" styleClass="p-datatable-sm p-datatable-gridlines">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Site</th>
+        <th>Project</th>
+        <th>Location</th>
+        <th>Engineer</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-site>
+      <tr>
+        <td>{{ site.siteName }}</td>
+        <td>{{ site.projectName }}</td>
+        <td class="location-cell">{{ locationLabel(site) }}</td>
+        <td>{{ site.assignedEngineerName || 'Unassigned' }}</td>
+        <td><p-tag [value]="site.status" [severity]="statusSeverity(site.status)"></p-tag></td>
+        <td>
+          <div class="row-actions">
+            <button pButton type="button" icon="pi pi-eye" severity="secondary" outlined="true" size="small" (click)="openDetails(site)"></button>
+            <button *ngIf="canUpdateExecution()" pButton type="button" icon="pi pi-file-edit" severity="help" outlined="true" size="small" (click)="openDetails(site)"></button>
+            <button *ngIf="canManage()" pButton type="button" icon="pi pi-pencil" severity="secondary" outlined="true" size="small" (click)="openEditDialog(site)"></button>
+            <button *ngIf="canDelete()" pButton type="button" icon="pi pi-trash" severity="danger" outlined="true" size="small" (click)="remove(site)"></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</section>
+
+<p-dialog
+  [(visible)]="showFormDialog"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: 'min(96vw, 980px)' }"
+  [contentStyle]="{ padding: '0.5rem', maxHeight: '80vh', overflow: 'auto' }"
+  [header]="editingSiteId ? 'Edit Site' : 'Create Site'"
+  (onHide)="closeFormDialog()"
+>
+  <app-site-form
+    *ngIf="showFormDialog"
+    [inDialog]="true"
+    [siteIdInput]="editingSiteId"
+    (saved)="handleFormSaved()"
+    (cancelled)="closeFormDialog()"
+  ></app-site-form>
+</p-dialog>

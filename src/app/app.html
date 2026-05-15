@@ -1,9 +1,9 @@
-<div class="app-shell" *ngIf="showMainChrome; else authOnly">
+﻿<div class="app-shell" *ngIf="showMainChrome; else authOnly">
   <header class="topbar">
     <button pButton type="button" icon="pi pi-bars" class="p-button-text p-button-plain" (click)="toggleSidebar()"></button>
     <div class="brand-block">
       <h1>Construction ERP</h1>
-      <small>{{ welcomeTitle() }} · Planning, execution, and control center</small>
+      <small>{{ welcomeTitle() }} - Planning, execution, and control center</small>
     </div>
     <div class="topbar-actions">
       <span class="role-chip">{{ role() }}</span>
@@ -21,10 +21,9 @@
     <nav class="nav-menu">
       <a
         *ngFor="let item of menu()"
-        [routerLink]="item.route"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' || item.route.endsWith('/dashboard') }"
-        (click)="closeSidebar()"
+        href=""
+        [class.active]="isMenuActive(item.route)"
+        (click)="$event.preventDefault(); navigate(item.route)"
       >
         <i [class]="item.icon"></i>
         <span>{{ item.label }}</span>

@@ -38,7 +38,10 @@ export class LoginComponent {
 
     this.submitting = true;
     const payload = this.form.getRawValue();
-    this.authService.login({ email: payload.email ?? '', password: payload.password ?? '' }).subscribe({
+    this.authService.login({
+      email: (payload.email ?? '').trim().toLowerCase(),
+      password: payload.password ?? ''
+    }).subscribe({
       next: (res) => {
         this.submitting = false;
         if (!res.token) {
@@ -51,8 +54,17 @@ export class LoginComponent {
       },
       error: (err: HttpErrorResponse) => {
         this.submitting = false;
-        this.error = err?.error?.message || 'Login failed';
+        this.error = this.resolveAuthError(err, 'Unable to sign in right now.');
       }
     });
+  }
+
+  private resolveAuthError(err: HttpErrorResponse, fallback: string): string {
+    const apiMessage = err?.error?.message;
+    if (apiMessage) return apiMessage;
+    if (err.status === 0) return 'Network issue: unable to reach server.';
+    if (err.status === 401) return 'Wrong email or password.';
+    if (err.status === 429) return 'Too many attempts. Please wait and try again.';
+    return fallback;
   }
 }

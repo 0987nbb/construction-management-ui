@@ -42,9 +42,9 @@
         <td>{{ project.spentAmount | currency }}</td>
         <td>
           <div class="row-actions">
-            <button *ngIf="role() !== 'Accountant'" pButton type="button" icon="pi pi-eye" severity="secondary" outlined="true" size="small" (click)="openDetails(project)"></button>
+            <button pButton type="button" icon="pi pi-eye" severity="secondary" outlined="true" size="small" (click)="openDetails(project)"></button>
             <button *ngIf="canManage()" pButton type="button" icon="pi pi-pencil" severity="secondary" outlined="true" size="small" (click)="openEditDialog(project)"></button>
-            <button *ngIf="canManage()" pButton type="button" icon="pi pi-trash" severity="danger" outlined="true" size="small" (click)="remove(project)"></button>
+            <button *ngIf="canDelete()" pButton type="button" icon="pi pi-trash" severity="danger" outlined="true" size="small" (click)="remove(project)"></button>
           </div>
         </td>
       </tr>

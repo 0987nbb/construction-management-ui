@@ -1,0 +1,27 @@
+.manage-panel {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 1rem;
+}
+
+.manage-panel h3 {
+  margin: 0 0 1rem;
+}
+
+.manage-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.manage-row label {
+  min-width: 140px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.error {
+  color: #b91c1c;
+  padding: 1rem;
+}

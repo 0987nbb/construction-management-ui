@@ -67,13 +67,13 @@ export class UserListComponent implements OnInit, OnDestroy {
     });
   }
 
+  onSearchChange(): void {
+    this.search$.next(this.search.trim());
+  }
+
   clearSearch(): void {
     this.search = '';
     this.load();
-  }
-
-  onSearchChange(): void {
-    this.search$.next(this.search.trim());
   }
 
   openCreateDialog(): void {
